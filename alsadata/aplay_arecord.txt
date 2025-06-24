@@ -1,0 +1,8 @@
+aplay
+    Subdevice #0: subdevice #0
+    card 1: Pro73019101 [Babyface Pro (73019101)], device 0: USB Audio [USB Audio]
+
+arecord
+    card 1: Pro73019101 [Babyface Pro (73019101)], device 0: USB Audio [USB Audio]
+        Subdevices: 1/1
+        Subdevice #0: subdevice #0

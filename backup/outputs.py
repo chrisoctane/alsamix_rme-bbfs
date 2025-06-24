@@ -16,7 +16,6 @@ class OutputsTabs(QWidget):
         self.tab_channel_strips = []
 
         out_map, func_map = build_output_map(alsa_backend, card_index=1)
-        print("out_map:", out_map)
         canonical_order = ["Mic", "Line", "ADAT", "PCM"]
 
         for pair in OUTPUT_TABS:
@@ -33,13 +32,12 @@ class OutputsTabs(QWidget):
             h = QHBoxLayout(strip)
             h.setSpacing(50)
 
-            # --- Correct: group loop inside tab loop ---
             for group in canonical_order:
                 group_pairs = out_map[pair].get(group, [])
-                group_widget = MixerGroupWidget(group, group_pairs, func_map)
-                tab_strips += group_widget.findChildren(ChannelStrip)
-                h.addWidget(group_widget)
-
+                if group_pairs:
+                    group_widget = MixerGroupWidget(group, group_pairs, func_map)
+                    tab_strips += group_widget.findChildren(ChannelStrip)
+                    h.addWidget(group_widget)
             h.addStretch()
             strip.setLayout(h)
             scroll.setWidget(strip)
@@ -82,17 +80,3 @@ class OutputsTabs(QWidget):
                 strip.fader.slider.blockSignals(False)
                 strip.db_label.setText(f"{val}")
 
-        # After updating visible strips, for each StereoPairStrip:
-        for pair_strip in self.findChildren(StereoPairStrip):
-            if pair_strip.linked:
-                left_cross = pair_strip.left_strip.crosspoints.get('L->R')
-                right_cross = pair_strip.right_strip.crosspoints.get('R->L')
-                # If either crosspoint nonzero, break the link and update UI to mono
-                cross_nonzero = False
-                if left_cross and alsa_backend.get_volume(left_cross) > 0:
-                    cross_nonzero = True
-                if right_cross and alsa_backend.get_volume(right_cross) > 0:
-                    cross_nonzero = True
-                if cross_nonzero:
-                    pair_strip.link_btn.setChecked(False)
-                    pair_strip.on_link_clicked(False)

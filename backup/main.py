@@ -11,11 +11,6 @@ from outputs import OutputsTabs
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     win = OutputsTabs()
-
-    print("Channels polled on launch:")
-    for strip in win.tab_channel_strips[0]:
-        print(strip.channel_name, strip.fader.slider.value())
-
     win.setWindowTitle("Babyface Pro FS Mixer")
     win.resize(1450, 500)
     win.show()

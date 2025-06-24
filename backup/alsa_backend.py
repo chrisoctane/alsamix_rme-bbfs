@@ -30,9 +30,6 @@ def get_all_controls(card_index=1):
             pass
         return controls
 
-    print("ALSA controls detected:", all_controls)
-
-
 def parse_control_name(name):
     """
     Return (src, dst) from an ALSA control name like 'PCM-AN1-AN2'.
