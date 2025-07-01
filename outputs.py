@@ -3,6 +3,7 @@ import alsa_backend
 from mixer_channels import build_output_map, OUTPUT_TABS
 from mixer_widgets import MixerGroupWidget, OutputFaderWidget, StereoPairStrip, ChannelStrip
 from alsa_polling import AlsaPollingWorker
+from patchbay import PatchbayView
 
 class OutputsTabs(QWidget):
     def __init__(self, card_index=1):
@@ -16,7 +17,6 @@ class OutputsTabs(QWidget):
         self.tab_channel_strips = []
 
         out_map, func_map = build_output_map(alsa_backend, card_index=1)
-        print("out_map:", out_map)
         canonical_order = ["Mic", "Line", "ADAT", "PCM"]
 
         for pair in OUTPUT_TABS:
@@ -33,13 +33,12 @@ class OutputsTabs(QWidget):
             h = QHBoxLayout(strip)
             h.setSpacing(50)
 
-            # --- Correct: group loop inside tab loop ---
             for group in canonical_order:
                 group_pairs = out_map[pair].get(group, [])
-                group_widget = MixerGroupWidget(group, group_pairs, func_map)
-                tab_strips += group_widget.findChildren(ChannelStrip)
-                h.addWidget(group_widget)
-
+                if group_pairs:
+                    group_widget = MixerGroupWidget(group, group_pairs, func_map)
+                    tab_strips += group_widget.findChildren(ChannelStrip)
+                    h.addWidget(group_widget)
             h.addStretch()
             strip.setLayout(h)
             scroll.setWidget(strip)
@@ -57,6 +56,12 @@ class OutputsTabs(QWidget):
             # Save for this tab
             self.tab_channel_strips.append(tab_strips)
 
+        # Add Patchbay tab
+        patchbay_tab = PatchbayView(card_index=1)
+        self.tabs.addTab(patchbay_tab, "Patchbay")
+        # Patchbay has no faders for polling
+        self.tab_channel_strips.append([])
+
         # --- Poll only the first tab's channels initially ---
         channel_names = [strip.channel_name for strip in self.tab_channel_strips[0]]
         self.alsa_worker = AlsaPollingWorker(channel_names, interval=0.5)
@@ -68,9 +73,14 @@ class OutputsTabs(QWidget):
     def _tab_changed(self, index):
         # Change ALSA poller to only watch the visible tab's strips
         active_strips = self.tab_channel_strips[index]
-        channel_names = [strip.channel_name for strip in active_strips]
-        self.alsa_worker.set_channels(channel_names)
-        self.active_strips = active_strips  # Save for updates
+        if active_strips:  # Skip polling for patchbay tab (empty list)
+            channel_names = [strip.channel_name for strip in active_strips]
+            self.alsa_worker.set_channels(channel_names)
+            self.active_strips = active_strips  # Save for updates
+        else:
+            # Patchbay tab - stop polling
+            self.alsa_worker.set_channels([])
+            self.active_strips = []
 
     def _alsa_update_received(self, values):
         # Only update the visible tab's strips for max efficiency!
@@ -82,17 +92,3 @@ class OutputsTabs(QWidget):
                 strip.fader.slider.blockSignals(False)
                 strip.db_label.setText(f"{val}")
 
-        # After updating visible strips, for each StereoPairStrip:
-        for pair_strip in self.findChildren(StereoPairStrip):
-            if pair_strip.linked:
-                left_cross = pair_strip.left_strip.crosspoints.get('L->R')
-                right_cross = pair_strip.right_strip.crosspoints.get('R->L')
-                # If either crosspoint nonzero, break the link and update UI to mono
-                cross_nonzero = False
-                if left_cross and alsa_backend.get_volume(left_cross) > 0:
-                    cross_nonzero = True
-                if right_cross and alsa_backend.get_volume(right_cross) > 0:
-                    cross_nonzero = True
-                if cross_nonzero:
-                    pair_strip.link_btn.setChecked(False)
-                    pair_strip.on_link_clicked(False)

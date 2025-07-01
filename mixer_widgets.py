@@ -5,9 +5,9 @@ Defines the visual components (widgets) for the mixer UI, based on the approved 
 This includes the detailed channel strip, stereo pairs, and group widgets.
 """
 import alsa_backend
-import math
-from PyQt6.QtCore import Qt, QTimer, QPoint, QRect, QSize, pyqtSignal
-from PyQt6.QtGui import QFont, QPainter, QColor, QPen, QFontMetrics, QIcon
+
+from PyQt6.QtCore import Qt, QTimer, QPoint, QRect, QSize
+from PyQt6.QtGui import QFont, QPainter, QColor, QPen, QFontMetrics
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QSlider,
     QSizePolicy, QPushButton, QSpacerItem
@@ -29,77 +29,6 @@ Colors = {
 }
 Colors["marker"].setAlphaF(0.2) # Softer 50% translucency
 Colors["group_bg"].setAlphaF(0.2)  # 20% opaque
-
-class PanBox(QWidget):
-    """
-    A horizontal pan control: -100 (L) ... 0 (C) ... +100 (R)
-    Shows a dynamic label: Lxx, C, or Rxx
-    """
-    valueChanged = pyqtSignal(int)
-    def __init__(self, value=0, parent=None):
-        super().__init__(parent)
-        self._value = value
-        self.setMinimumHeight(36)
-        self.setMaximumHeight(40)
-        self.setMinimumWidth(80)
-        self.setMaximumWidth(180)
-        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        self._dragging = False
-
-    def value(self):
-        return self._value
-
-    def setValue(self, v):
-        v = max(-100, min(100, int(v)))
-        if self._value != v:
-            self._value = v
-            self.valueChanged.emit(v)
-            self.update()
-
-    def paintEvent(self, event):
-        p = QPainter(self)
-        rect = self.rect().adjusted(10, 10, -10, -10)
-        # Draw track
-        p.setPen(QPen(Colors['fader_track'], 3))
-        p.setBrush(Qt.BrushStyle.NoBrush)
-        p.drawRoundedRect(rect, 9, 9)
-
-        # Draw dynamic pan label (Lxx, C, Rxx)
-        font = QFont("Inter", 9, QFont.Weight.Bold)
-        p.setFont(font)
-        p.setPen(Colors['text_primary'])
-        metrics = QFontMetrics(font)
-        if self._value == 0:
-            pan_str = "C"
-        elif self._value < 0:
-            pan_str = f"L{abs(self._value)}"
-        else:
-            pan_str = f"R{self._value}"
-        x_label = rect.center().x() - metrics.horizontalAdvance(pan_str)//2
-        p.drawText(int(x_label), rect.top() - 2, pan_str)
-
-        # Draw handle
-        x_pos = rect.left() + ((self._value + 100) / 200.0) * rect.width()
-        handle_rect = QRect(int(x_pos) - 8, rect.top() + 8, 16, rect.height() - 16)
-        p.setBrush(Colors['active_blue'])
-        p.setPen(QPen(Colors['active_blue'], 1))
-        p.drawRoundedRect(handle_rect, 6, 6)
-
-    def mousePressEvent(self, event):
-        if event.button() == Qt.MouseButton.LeftButton:
-            self._dragging = True
-            self._set_from_pos(event.position().x())
-    def mouseMoveEvent(self, event):
-        if self._dragging:
-            self._set_from_pos(event.position().x())
-    def mouseReleaseEvent(self, event):
-        self._dragging = False
-    def _set_from_pos(self, x):
-        rect = self.rect().adjusted(10, 10, -10, -10)
-        rel = (x - rect.left()) / rect.width()
-        rel = max(0, min(1, rel))
-        value = int(rel * 200 - 100)
-        self.setValue(value)
 
 class ElidedLabel(QWidget):
     """ A custom widget to display vertical, elided text that correctly sizes itself. """
@@ -180,6 +109,27 @@ class Fader(QWidget):
         p.end()
 
 
+
+# --- Simple pan control ---
+class PanControl(QWidget):
+    def __init__(self, label, initial=0, parent=None):
+        super().__init__(parent)
+        layout = QHBoxLayout(self)
+        self.label = QLabel(label)
+        self.slider = QSlider(Qt.Orientation.Horizontal)
+        self.slider.setRange(-100, 100)
+        self.slider.setValue(initial)
+        self.slider.setMinimumWidth(50)
+        layout.addWidget(self.label)
+        layout.addWidget(self.slider)
+        self.setLayout(layout)
+    def set_value(self, value):
+        self.slider.setValue(value)
+    def get_value(self):
+        return self.slider.value()
+    def connect(self, fn):
+        self.slider.valueChanged.connect(fn)
+
 class ChannelStrip(QWidget):
     def __init__(self, channel_name, functions=None, is_output=False, parent=None, crosspoints=None, linked=True):
         super().__init__(parent)
@@ -202,9 +152,6 @@ class ChannelStrip(QWidget):
 
         self.fader = Fader()
         controls_layout.addWidget(self.fader)
-
-        self.fader.slider.setValue(self.get_alsa_value())
-        self.fader.slider.valueChanged.connect(self.on_fader_change)
 
         control_axis_widget = QWidget()
         control_axis_layout = QVBoxLayout(control_axis_widget)
@@ -239,7 +186,7 @@ class ChannelStrip(QWidget):
         controls_layout.addWidget(control_axis_widget)
         v_layout.addWidget(controls_area, stretch=1)
 
-        # PAN AREA (dynamic, created below)
+        # PAN LAYOUT AREA (dynamic)
         self.pan_area = QWidget()
         self.pan_layout = QHBoxLayout(self.pan_area)
         self.pan_layout.setContentsMargins(0, 0, 0, 0)
@@ -253,48 +200,41 @@ class ChannelStrip(QWidget):
         self.fader.slider.valueChanged.connect(self.on_fader_change)
 
         self.set_button_styles()
-        # self.setup_pan_widgets()   # No longer needed; see below
+        self.setup_pan_widgets()
 
-    def show_individual_pan(self, show=True):
-        # Remove old pan widget if present
+    def setup_pan_widgets(self):
+        # Remove old
         for i in reversed(range(self.pan_layout.count())):
             item = self.pan_layout.takeAt(i)
             widget = item.widget()
             if widget is not None:
                 widget.setParent(None)
-        if show:
-            self.indiv_panbox = PanBox(0)
-            self.pan_layout.addWidget(self.indiv_panbox, alignment=Qt.AlignmentFlag.AlignCenter)
-            # Connect panbox signal to handler
-            self.indiv_panbox.valueChanged.connect(self.on_indiv_pan_changed)
+        # Linked: no individual pan; shown only on one strip (balance for pair in StereoPairStrip)
+        if self.linked:
+            self.pan = PanControl("Balance", 0)
+            self.pan.connect(self.on_pan_change)
+            self.pan_layout.addWidget(self.pan)
         else:
-            self.indiv_panbox = None
+            self.pan = PanControl("Pan", 0)
+            self.pan.connect(self.on_pan_change)
+            self.pan_layout.addWidget(self.pan)
 
-    def on_indiv_pan_changed(self, value):
-        """
-        TotalMixFX-style pan law for unlinked mono strip.
-        - Fader stays fixed at user-set value.
-        - Pan splits fader value between main and crosspoint ALSA controls.
-        """
-        import math  # Only if not already imported at top
-        fader = self.fader.slider.value()
-        pan = max(-100, min(100, value))
-        pan_norm = pan / 100  # -1 to 1
-
-        if self.channel_name.endswith("AN1"):
-            main = self.channel_name
-            cross = self.crosspoints.get("L->R")
-            main_vol = int(fader * math.cos((pan_norm + 1) * (math.pi / 4)))
-            cross_vol = int(fader * math.sin((pan_norm + 1) * (math.pi / 4)))
+    def on_pan_change(self, _):
+        val = self.pan.get_value()
+        if self.linked:
+            # Only call ALSA for main outs (pair), not crosspoints
+            alsa_backend.set_crosspoint_volume(
+                self.crosspoints.get('L->R'), self.crosspoints.get('R->L'),
+                self.crosspoints.get('L->L'), self.crosspoints.get('R->R'),
+                val, True
+            )
         else:
-            main = self.channel_name
-            cross = self.crosspoints.get("R->L")
-            main_vol = int(fader * math.cos((1 - pan_norm) * (math.pi / 4)))
-            cross_vol = int(fader * math.sin((1 - pan_norm) * (math.pi / 4)))
-
-        alsa_backend.set_volume(main, max(0, min(100, main_vol)))
-        if cross:
-            alsa_backend.set_volume(cross, max(0, min(100, cross_vol)))
+            # Call ALSA for both main and cross (true panning for the strip)
+            alsa_backend.set_crosspoint_volume(
+                self.crosspoints.get('L->R'), self.crosspoints.get('R->L'),
+                self.crosspoints.get('L->L'), self.crosspoints.get('R->R'),
+                (val, val), False
+            )
 
     def get_alsa_value(self):
         try:
@@ -345,12 +285,10 @@ class ChannelStrip(QWidget):
             if btn.text() == "L":
                 btn.setStyleSheet(btn.styleSheet() + f"QPushButton:checked {{ background-color: #87ceeb; }}")
 
-from PyQt6.QtGui import QIcon  # Add this import at the top if not present
-
 class StereoPairStrip(QWidget):
     def __init__(self, lname, rname, functions=None, parent=None):
         super().__init__(parent)
-        self.linked = True  # Initial default
+        self.linked = True  # Default to stereo linked
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -370,60 +308,34 @@ class StereoPairStrip(QWidget):
         self.left_strip = ChannelStrip(lname, functions, crosspoints=crosspoints, linked=self.linked)
         self.right_strip = ChannelStrip(rname, functions, crosspoints=crosspoints, linked=self.linked)
 
-        # Mono detection (after strips are created!)
-        left_cross = self.left_strip.crosspoints.get('L->R')
-        right_cross = self.right_strip.crosspoints.get('R->L')
-        mono_detected = False
-        if left_cross and alsa_backend.get_volume(left_cross) > 0:
-            mono_detected = True
-        if right_cross and alsa_backend.get_volume(right_cross) > 0:
-            mono_detected = True
-
-        # --- PAN ROW (always present, swap what's visible)
-        self.pan_row = QHBoxLayout()
-        self.pan_row.setContentsMargins(0, 0, 0, 0)
-        self.pan_row.setSpacing(8)
-
-        self.pair_panbox = PanBox(0)
-        self.left_panbox = PanBox(0)
-        self.right_panbox = PanBox(0)
-
-        # Linked: connect single panbox as before
-        self.pair_panbox.valueChanged.connect(self.on_pair_pan_changed)
-        # Unlinked: connect each panbox to channel strip logic
-        self.left_panbox.valueChanged.connect(self.left_strip.on_indiv_pan_changed)
-        self.right_panbox.valueChanged.connect(self.right_strip.on_indiv_pan_changed)
-
-        # Add all three, hide/show as needed
-        self.pan_row.addWidget(self.pair_panbox, stretch=2)
-        self.pan_row.addWidget(self.left_panbox, stretch=1)
-        self.pan_row.addWidget(self.right_panbox, stretch=1)
-        layout.addLayout(self.pan_row)
-
-        # Fader block
         hpair.addWidget(self.left_strip)
         hpair.addWidget(self.right_strip)
         layout.addLayout(hpair)
 
-        # --- Link button with SVG icon ---
-        self.link_btn = QPushButton()
+        # --- Link button for the pair ---
+        self.link_btn = QPushButton("🔗")
         self.link_btn.setCheckable(True)
+        self.link_btn.setChecked(self.linked)
         self.link_btn.setToolTip("Stereo Link: Move both faders together")
         self.link_btn.setMinimumSize(32, 24)
         self.link_btn.setMaximumSize(32, 24)
-        self.link_btn.setIcon(QIcon("icons/link.svg"))
-        self.link_btn.setIconSize(QSize(22, 22))
         self.link_btn.setStyleSheet("""
             QPushButton {
                 background-color: #4a5568;
+                color: #cbd5e0;
                 border-radius: 6px;
+                font-size: 18px;
                 min-width: 32px; max-width: 32px;
                 min-height: 24px; max-height: 24px;
             }
-            QPushButton:checked {
+            QPushButton:checked,
+            QPushButton:checked:hover,
+            QPushButton:checked:focus {
                 background-color: #87ceeb !important;
+                color: black !important;
             }
         """)
+        self.link_btn.clicked.connect(self.on_link_clicked)
 
         btn_row = QHBoxLayout()
         btn_row.addStretch(1)
@@ -432,45 +344,25 @@ class StereoPairStrip(QWidget):
         layout.addLayout(btn_row)
 
         self.setLayout(layout)
-        self.link_btn.clicked.connect(self.on_link_clicked)
+
+        # --- Connect fader changes for linking ---
         self.left_strip.fader.slider.valueChanged.connect(self._left_fader_moved)
         self.right_strip.fader.slider.valueChanged.connect(self._right_fader_moved)
 
-        # Set initial link state based on ALSA
-        if mono_detected:
-            self.link_btn.setChecked(False)
-            self.on_link_clicked(False)
-        else:
-            self.link_btn.setChecked(True)
-            self.on_link_clicked(True)
-
     def on_link_clicked(self, checked):
         self.linked = checked
-        self.pair_panbox.setVisible(self.linked)
-        self.left_panbox.setVisible(not self.linked)
-        self.right_panbox.setVisible(not self.linked)
-        self.left_strip.show_individual_pan(False)
-        self.right_strip.show_individual_pan(False)
-
-        if checked:
-            # Stereo: zero crosspoints
-            left_cross = self.left_strip.crosspoints.get('L->R')
-            right_cross = self.right_strip.crosspoints.get('R->L')
-            if left_cross:
-                alsa_backend.set_volume(left_cross, 0)
-            if right_cross:
-                alsa_backend.set_volume(right_cross, 0)
-        else:
-            # Unlinked: set default pans so image/sound doesn't change
-            self.left_panbox.setValue(-100)   # Hard left (only to L out)
-            self.right_panbox.setValue(100)   # Hard right (only to R out)
+        # Update ChannelStrips to match link state (also update pan control)
+        self.left_strip.linked = checked
+        self.right_strip.linked = checked
+        self.left_strip.setup_pan_widgets()
+        self.right_strip.setup_pan_widgets()
 
     def _left_fader_moved(self, value):
         if self.linked and self.right_strip.fader.slider.value() != value:
             self.right_strip.fader.slider.blockSignals(True)
             self.right_strip.fader.slider.setValue(value)
             self.right_strip.fader.slider.blockSignals(False)
-            self.right_strip.set_alsa_value(value)
+            self.right_strip.set_alsa_value(value)  # also update ALSA for R channel
             self.right_strip.db_label.setText(f"{value}")
 
     def _right_fader_moved(self, value):
@@ -478,29 +370,19 @@ class StereoPairStrip(QWidget):
             self.left_strip.fader.slider.blockSignals(True)
             self.left_strip.fader.slider.setValue(value)
             self.left_strip.fader.slider.blockSignals(False)
-            self.left_strip.set_alsa_value(value)
+            self.left_strip.set_alsa_value(value)  # also update ALSA for L channel
             self.left_strip.db_label.setText(f"{value}")
 
-    def on_pair_pan_changed(self, value):
-        # Pan should not change the main fader's ALSA volume!
-        # If you have matrix routing/crosspoint, set those here. Otherwise, do nothing.
-        left_cross = self.left_strip.crosspoints.get('L->R')
-        right_cross = self.right_strip.crosspoints.get('R->L')
-        # In linked mode, crosspoints should always be zero.
-        if left_cross:
-            alsa_backend.set_volume(left_cross, 0)
-        if right_cross:
-            alsa_backend.set_volume(right_cross, 0)
-        # Optionally, if you have actual matrix output controls, set their levels for balance here.
-        # Otherwise, DO NOTHING regarding main channel volumes!
 
 class MixerGroupWidget(QWidget):
     def __init__(self, group_name, pair_list, func_map, parent=None):
         super().__init__(parent)
+        # ... existing label and fader layout ...
         v_layout = QVBoxLayout()
         v_layout.setSpacing(8)
         v_layout.setContentsMargins(0, 0, 0, 0)
 
+        # Group label as before...
         lbl = QLabel(group_name)
         lbl.setAlignment(Qt.AlignmentFlag.AlignCenter)
         lbl.setFont(QFont("Inter", 11, QFont.Weight.Normal))
@@ -509,15 +391,8 @@ class MixerGroupWidget(QWidget):
 
         h_layout = QHBoxLayout()
         h_layout.setSpacing(12)
-
-        def is_main_channel(channel):
-            parts = channel.split('-')
-            return len(parts) == 3 and parts[1] == parts[2]
-
         for l, r in pair_list:
-            print("Creating fader for:", l, r)
             h_layout.addWidget(StereoPairStrip(l, r, func_map))
-
         v_layout.addLayout(h_layout)
 
         # Wrap everything in a "card"
@@ -526,7 +401,6 @@ class MixerGroupWidget(QWidget):
         outer_layout = QVBoxLayout(self)
         outer_layout.setContentsMargins(6, 6, 6, 6)
         outer_layout.addWidget(card)
-
 
 class GroupCardWidget(QWidget):
     def __init__(self, content_widget, parent=None):

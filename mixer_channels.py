@@ -101,8 +101,8 @@ def build_output_map(alsa_backend, card_index=1):
         for group, pairlist in group_dict.items():
             valid_pairs = []
             for l_name, r_name in pairlist:
-                valid_pairs.append((l_name, r_name))
-
+                if l_name in all_controls and r_name in all_controls:
+                    valid_pairs.append((l_name, r_name))
             if valid_pairs:
                 group_map[group] = valid_pairs
         output_map[tab_pair] = group_map

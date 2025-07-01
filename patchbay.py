@@ -1,12 +1,15 @@
 import sys
 from PyQt6.QtWidgets import (
-    QGraphicsView, QGraphicsScene, QGraphicsWidget, QGraphicsTextItem, QGraphicsRectItem, QGraphicsItem
+    QGraphicsView, QGraphicsScene, QGraphicsWidget, QGraphicsTextItem, QGraphicsRectItem, QGraphicsItem,
+    QSlider, QVBoxLayout, QHBoxLayout, QWidget, QLabel, QGraphicsProxyWidget
 )
 from PyQt6.QtGui import QBrush, QColor, QPen, QFont, QPainter, QFontMetrics
-from PyQt6.QtCore import Qt, QRectF, QTimer
+from PyQt6.QtCore import Qt, QRectF, QTimer, QPointF
 
 import alsa_backend
 from alsaaudio import Mixer
+import math
+from config import *
 
 
 class PatchbayChannel(QGraphicsWidget):
@@ -27,6 +30,10 @@ class PatchbayChannel(QGraphicsWidget):
         self.mixer = mixer
         self.is_output = ctl_name.startswith("Main-Out") or ctl_name.startswith("OUT")
         self.is_nonfader = not show_fader
+
+        # Grouping functionality
+        self.snapped_blocks = set()
+        self.is_snap_target = False
 
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable, True)
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable, True)
@@ -127,19 +134,45 @@ class PatchbayChannel(QGraphicsWidget):
     def wheelEvent(self, event):
         if not self.show_fader:
             return
+            
+        # Check if mouse is over the fader area
+        pos = event.pos()
+        fader_rect = self.fader_bg.rect()
+        if not fader_rect.contains(pos):
+            # Mouse is not over the fader, ignore the event
+            event.ignore()
+            return
+            
         steps = event.delta() // 120
         modifiers = event.modifiers()
         fine = 1 if modifiers & (Qt.KeyboardModifier.AltModifier | Qt.KeyboardModifier.ShiftModifier) else 5
         new_value = min(max(self.fader_value + steps * fine, 0), 100)
         self.fader_value = new_value
         self.updateFader()
-        try:
-            self.mixer.setvolume(int(self.fader_value))
-        except Exception:
-            pass
+        
+        # Update group controls if in a group
+        self._update_group_controls_from_fader()
+        
         event.accept()
+        
+    def _update_group_controls_from_fader(self):
+        """Update group controls (crossfader, macro) when individual fader changes."""
+        if len(self.snapped_blocks) == 0:
+            return
+            
+        # Find the group container
+        scene = self.scene()
+        if not scene:
+            return
+            
+        for item in scene.items():
+            if hasattr(item, 'blocks') and self in item.blocks:
+                # This is our group container
+                if hasattr(item, '_on_individual_fader_changed'):
+                    item._on_individual_fader_changed(self)
+                break
 
-    def updateFader(self):
+    def updateFader(self, skip_change_event=False):
         if self.fader_bar is not None:
             label_bar_height = 32
             fader_x = self.HANDLE_WIDTH + (self.WIDTH - self.HANDLE_WIDTH - self.FADER_BAR_WIDTH) / 2
@@ -151,6 +184,13 @@ class PatchbayChannel(QGraphicsWidget):
             )
             self.value_text.setPos(self.fader_bg.rect().left(), self.fader_bg.rect().bottom() + 4)
         self.value_text.setPlainText(str(int(self.fader_value)))
+        
+        # Update ALSA if not skipping change event
+        if not skip_change_event:
+            try:
+                self.mixer.setvolume(int(self.fader_value))
+            except Exception:
+                pass
 
     def paint(self, painter, option, widget):
         # Draw rounded channel outline if selected
@@ -161,7 +201,391 @@ class PatchbayChannel(QGraphicsWidget):
             painter.setBrush(Qt.BrushStyle.NoBrush)
             r = self.boundingRect()
             painter.drawRoundedRect(r, 12, 12)
+        elif self.is_snap_target:
+            # Draw snap target highlighting
+            pen = QPen(QColor("#FFD700"), 3, Qt.PenStyle.DashLine)
+            painter.setPen(pen)
+            painter.setBrush(Qt.BrushStyle.NoBrush)
+            r = self.boundingRect()
+            painter.drawRoundedRect(r, 12, 12)
         super().paint(painter, option, widget)
+
+    def add_to_group(self, other_block):
+        """Add this block to a group with another block."""
+        if other_block not in self.snapped_blocks:
+            self.snapped_blocks.add(other_block)
+            other_block.snapped_blocks.add(self)
+
+    def remove_from_group(self, other_block):
+        """Remove this block from a group with another block."""
+        self.snapped_blocks.discard(other_block)
+        other_block.snapped_blocks.discard(self)
+
+    def get_all_grouped_blocks(self):
+        """Get all blocks in the same group as this block."""
+        if not self.snapped_blocks:
+            return {self}
+        
+        visited = set()
+        to_visit = {self}
+        group = set()
+        
+        while to_visit:
+            current = to_visit.pop()
+            if current in visited:
+                continue
+            visited.add(current)
+            group.add(current)
+            to_visit.update(current.snapped_blocks - visited)
+        
+        return group
+
+    def update_group_state(self):
+        """Update the visual state based on group membership."""
+        if self.snapped_blocks:
+            self.setZValue(2)
+        else:
+            self.setZValue(1)
+            
+    def mousePressEvent(self, event):
+        """Handle mouse press events for fader interaction."""
+        if not self.show_fader:
+            return
+        if event.button() == Qt.MouseButton.LeftButton:
+            pos = event.pos()
+            fader_rect = self.fader_bg.rect()
+            if fader_rect.contains(pos):
+                self._handle_fader_click(pos.y() - fader_rect.y())
+                # Update group controls if in a group
+                self._update_group_controls_from_fader()
+        super().mousePressEvent(event)
+        
+    def _handle_fader_click(self, y_offset):
+        """Handle fader click to set volume."""
+        fader_height = 107  # Height of the fader area
+        value = max(0, min(100, (fader_height - y_offset) / fader_height * 100))
+        self.fader_value = value
+        self.updateFader()
+
+
+class GroupContainer(QGraphicsWidget):
+    """Container widget that holds grouped channels and manages their movement together."""
+    HANDLE_WIDTH = GROUP_HANDLE_WIDTH
+    HANDLE_COLOR = GROUP_HANDLE_COLOR
+    HANDLE_HOVER_COLOR = GROUP_HANDLE_HOVER_COLOR
+    HANDLE_TEXT_COLOR = GROUP_HANDLE_TEXT_COLOR
+    CORNER_RADIUS = GROUP_CORNER_RADIUS
+    OUTLINE_COLOR = GROUP_OUTLINE_COLOR
+    OUTLINE_WIDTH = GROUP_OUTLINE_WIDTH
+
+    def __init__(self, blocks, parent=None):
+        super().__init__(parent)
+        self.blocks = list(blocks)
+        self._block_offsets = {}
+        self._updating_controls = False
+        self.macro_fader_value = None
+        
+        # Setup graphics item
+        self.setFlag(QGraphicsWidget.GraphicsItemFlag.ItemIsMovable, True)
+        self.setFlag(QGraphicsWidget.GraphicsItemFlag.ItemIsSelectable, True)
+        self.setZValue(10)
+        
+        # Setup layout and controls
+        self._setup_layout()
+        self._setup_controls()
+        
+        # Only create crossfader and macro fader for 2-block groups
+        if len(self.blocks) == 2:
+            self._setup_crossfader()
+            self._setup_macro_fader()
+
+    def _setup_layout(self):
+        """Calculate bounding rect and store block offsets."""
+        if not self.blocks:
+            print("[ERROR] No blocks provided to GroupContainer")
+            return
+            
+        try:
+            # Check if all blocks are still in the scene
+            for block in self.blocks:
+                if not block.scene():
+                    print(f"[ERROR] Block {block.ctl_name} not in scene")
+                    return
+                    
+            min_x = min(block.pos().x() for block in self.blocks)
+            min_y = min(block.pos().y() for block in self.blocks)
+            self.setPos(min_x - self.HANDLE_WIDTH, min_y)
+            
+            print(f"[DEBUG] Group container positioned at {self.pos()}")
+            
+            # Store initial block positions relative to the group
+            content_start_x = self.pos().x() + self.HANDLE_WIDTH
+            for block in self.blocks:
+                offset = block.pos() - QPointF(content_start_x, self.pos().y())
+                self._block_offsets[block] = offset
+                # Lock the blocks in place and hide grab handles
+                block.setFlag(QGraphicsWidget.GraphicsItemFlag.ItemIsMovable, False)
+                block.setFlag(QGraphicsWidget.GraphicsItemFlag.ItemIsSelectable, False)
+                block.setZValue(0)
+                
+                # Hide the grab handle for grouped blocks
+                if hasattr(block, 'handle_rect'):
+                    block.handle_rect.setVisible(False)
+                if hasattr(block, 'handle_text'):
+                    block.handle_text.setVisible(False)
+            
+            # Calculate group size
+            group_width = sum(block.WIDTH for block in self.blocks) + (len(self.blocks)-1)*10
+            group_height = max(block.HEIGHT for block in self.blocks)
+            self.setGeometry(QRectF(0, 0, group_width + self.HANDLE_WIDTH + 50, group_height + 80))
+            
+            print(f"[DEBUG] Group container geometry: {self.geometry()}")
+            
+            # Position blocks within the group
+            self._update_block_positions()
+            
+        except Exception as e:
+            print(f"[ERROR] Failed to setup group layout: {e}")
+            raise
+        
+    def _update_block_positions(self):
+        """Update all block positions to match the group container."""
+        content_start_x = self.pos().x() + self.HANDLE_WIDTH
+        for block in self.blocks:
+            if block in self._block_offsets:
+                new_block_pos = content_start_x + self._block_offsets[block].x()
+                new_block_pos_y = self.pos().y() + self._block_offsets[block].y()
+                block.setPos(new_block_pos, new_block_pos_y)
+
+    def _setup_controls(self):
+        pass
+
+    def _setup_crossfader(self):
+        if len(self.blocks) != 2:
+            return
+        self.crossfader = QSlider(Qt.Orientation.Horizontal)
+        self.crossfader.setRange(0, 100)
+        self.crossfader.setValue(50)
+        self.crossfader.setFixedSize(120, 20)
+        self.crossfader.setStyleSheet("""
+            QSlider::groove:horizontal { background: #222; height: 8px; border-radius: 4px; }
+            QSlider::handle:horizontal { background: #3f7fff; width: 16px; height: 16px; margin: -4px 0; border-radius: 8px; }
+        """)
+        self.crossfader_proxy = QGraphicsProxyWidget(self)
+        self.crossfader_proxy.setWidget(self.crossfader)
+        # Center the crossfader horizontally
+        crossfader_x = (self.geometry().width() - 120) / 2
+        crossfader_y = self.geometry().height() - 60
+        self.crossfader_proxy.setPos(crossfader_x, crossfader_y)
+        self.crossfader.valueChanged.connect(self._on_crossfader_changed)
+        self.crossfader_label = QGraphicsTextItem("Crossfader", self)
+        self.crossfader_label.setFont(QFont("Sans", 8))
+        self.crossfader_label.setDefaultTextColor(QColor("#fff"))
+        self.crossfader_label.setPos(crossfader_x, crossfader_y - 15)
+
+    def _setup_macro_fader(self):
+        if len(self.blocks) != 2:
+            return
+        self.macro_fader = QSlider(Qt.Orientation.Vertical)
+        self.macro_fader.setRange(0, 100)
+        self.macro_fader.setValue(100)
+        self.macro_fader.setFixedSize(20, 80)
+        self.macro_fader.setStyleSheet("""
+            QSlider::groove:vertical { background: #222; width: 8px; border-radius: 4px; }
+            QSlider::handle:vertical { background: #ff3f7f; height: 10px; width: 16px; margin: 0 -4px; border-radius: 3px; }
+        """)
+        self.macro_proxy = QGraphicsProxyWidget(self)
+        self.macro_proxy.setWidget(self.macro_fader)
+        # Position macro fader on the right side, centered vertically
+        macro_x = self.geometry().width() - 30  # 30 pixels from right edge
+        macro_y = (self.geometry().height() - 80) / 2  # Center vertically
+        self.macro_proxy.setPos(macro_x, macro_y)
+        self.macro_fader.valueChanged.connect(self._on_macro_fader_changed)
+        self.macro_fader_value = 100
+        self.macro_label = QGraphicsTextItem("Macro", self)
+        self.macro_label.setFont(QFont("Sans", 8))
+        self.macro_label.setDefaultTextColor(QColor("#fff"))
+        self.macro_label.setPos(macro_x - 5, macro_y + 85)
+
+    def _on_macro_fader_changed(self, value):
+        if len(self.blocks) == 2 and not self._updating_controls:
+            self._updating_controls = True
+            self.macro_fader_value = value
+            try:
+                # Get current crossfader position
+                crossfader_pos = 50
+                if self.crossfader:
+                    crossfader_pos = self.crossfader.value()
+                
+                # Calculate pan ratios (constant-power law)
+                pan = crossfader_pos / 100.0
+                left_ratio = math.cos(pan * math.pi / 2)
+                right_ratio = math.sin(pan * math.pi / 2)
+                
+                # Apply macro level while preserving pan relationship
+                left_volume = int(value * left_ratio)
+                right_volume = int(value * right_ratio)
+                left_volume = min(max(left_volume, 0), 100)
+                right_volume = min(max(right_volume, 0), 100)
+                
+                # Update left block
+                if hasattr(self.blocks[0], 'fader_value'):
+                    self.blocks[0].fader_value = left_volume
+                    self.blocks[0].updateFader(skip_change_event=True)
+                    if hasattr(self.blocks[0], 'mixer'):
+                        self.blocks[0].mixer.setvolume(left_volume)
+                
+                # Update right block
+                if hasattr(self.blocks[1], 'fader_value'):
+                    self.blocks[1].fader_value = right_volume
+                    self.blocks[1].updateFader(skip_change_event=True)
+                    if hasattr(self.blocks[1], 'mixer'):
+                        self.blocks[1].mixer.setvolume(right_volume)
+                        
+            except Exception as e:
+                print(f"Macro fader update failed: {e}")
+            finally:
+                self._updating_controls = False
+
+    def _on_crossfader_changed(self, value):
+        if len(self.blocks) == 2 and not self._updating_controls:
+            self._updating_controls = True
+            try:
+                # Calculate pan ratios (constant-power law)
+                pan = value / 100.0
+                macro_level = self.macro_fader_value if self.macro_fader_value is not None else 100
+                left_ratio = math.cos(pan * math.pi / 2)
+                right_ratio = math.sin(pan * math.pi / 2)
+                
+                # Apply crossfader while respecting macro level
+                left_volume = int(macro_level * left_ratio)
+                right_volume = int(macro_level * right_ratio)
+                left_volume = min(max(left_volume, 0), 100)
+                right_volume = min(max(right_volume, 0), 100)
+                
+                # Update left block
+                if hasattr(self.blocks[0], 'fader_value'):
+                    self.blocks[0].fader_value = left_volume
+                    self.blocks[0].updateFader(skip_change_event=True)
+                    if hasattr(self.blocks[0], 'mixer'):
+                        self.blocks[0].mixer.setvolume(left_volume)
+                
+                # Update right block
+                if hasattr(self.blocks[1], 'fader_value'):
+                    self.blocks[1].fader_value = right_volume
+                    self.blocks[1].updateFader(skip_change_event=True)
+                    if hasattr(self.blocks[1], 'mixer'):
+                        self.blocks[1].mixer.setvolume(right_volume)
+                        
+            except Exception as e:
+                print(f"Crossfader update failed: {e}")
+            finally:
+                self._updating_controls = False
+
+    def _on_individual_fader_changed(self, changed_block):
+        if len(self.blocks) != 2 or self._updating_controls:
+            return
+        self._updating_controls = True
+        try:
+            left_current = self.blocks[0].fader_value
+            right_current = self.blocks[1].fader_value
+            total_volume = left_current + right_current
+            if total_volume > 0:
+                crossfader_pos = int((right_current / total_volume) * 100)
+            else:
+                crossfader_pos = 50
+            if self.crossfader:
+                self.crossfader.blockSignals(True)
+                self.crossfader.setValue(int(crossfader_pos))
+                self.crossfader.blockSignals(False)
+            if self.macro_fader:
+                self.macro_fader.blockSignals(True)
+                self.macro_fader.setValue(int(total_volume))
+                self.macro_fader.blockSignals(False)
+                self.macro_fader_value = int(total_volume)
+        except Exception as e:
+            print(f"Individual fader update failed: {e}")
+        finally:
+            self._updating_controls = False
+
+    def paint(self, painter, option, widget):
+        super().paint(painter, option, widget)
+        pen = QPen(self.OUTLINE_COLOR, self.OUTLINE_WIDTH)
+        painter.setPen(pen)
+        painter.setBrush(QBrush(Qt.BrushStyle.NoBrush))
+        painter.drawRoundedRect(self.boundingRect(), self.CORNER_RADIUS, self.CORNER_RADIUS)
+        handle_rect = QRectF(0, 0, self.HANDLE_WIDTH, self.geometry().height())
+        painter.setBrush(QBrush(self.HANDLE_COLOR))
+        painter.setPen(QPen(Qt.PenStyle.NoPen))
+        painter.drawRoundedRect(handle_rect, self.CORNER_RADIUS, self.CORNER_RADIUS)
+        painter.setPen(QPen(self.HANDLE_TEXT_COLOR))
+        painter.setFont(QFont("Sans", 12, QFont.Weight.Bold))
+        painter.drawText(handle_rect, Qt.AlignmentFlag.AlignCenter, "G")
+
+    def hoverMoveEvent(self, event):
+        handle_rect = QRectF(0, 0, self.HANDLE_WIDTH, self.geometry().height())
+        if handle_rect.contains(event.pos()):
+            self.setCursor(Qt.CursorShape.SizeAllCursor)
+        else:
+            self.setCursor(Qt.CursorShape.ArrowCursor)
+        super().hoverMoveEvent(event)
+
+    def mousePressEvent(self, event):
+        handle_rect = QRectF(0, 0, self.HANDLE_WIDTH, self.geometry().height())
+        if handle_rect.contains(event.pos()):
+            print(f"Group handle pressed at {event.pos()}")
+            # Store the initial position for dragging
+            self._drag_start_pos = event.scenePos()
+            self._drag_start_group_pos = self.pos()
+            # Set dragging flag to prevent group recreation
+            if hasattr(self.scene(), 'view'):
+                self.scene().view._dragging_group = True
+            event.accept()
+        else:
+            event.ignore()
+
+    def mouseMoveEvent(self, event):
+        if event.buttons() & Qt.MouseButton.LeftButton and hasattr(self, '_drag_start_pos'):
+            # Calculate the movement delta in scene coordinates
+            delta = event.scenePos() - self._drag_start_pos
+            new_pos = self._drag_start_group_pos + delta
+            
+            print(f"Moving group from {self.pos()} to {new_pos}")
+            
+            # Move the group container
+            self.setPos(new_pos)
+            
+            # Update all block positions to follow the group
+            self._update_block_positions()
+            event.accept()
+        else:
+            super().mouseMoveEvent(event)
+
+    def mouseReleaseEvent(self, event):
+        # Clean up drag state
+        if hasattr(self, '_drag_start_pos'):
+            delattr(self, '_drag_start_pos')
+        if hasattr(self, '_drag_start_group_pos'):
+            delattr(self, '_drag_start_group_pos')
+        # Clear dragging flag
+        if hasattr(self.scene(), 'view'):
+            self.scene().view._dragging_group = False
+        super().mouseReleaseEvent(event)
+
+    def cleanup(self):
+        """Restore blocks to their original state when group is destroyed."""
+        for block in self.blocks:
+            # Restore grab handles
+            if hasattr(block, 'handle_rect'):
+                block.handle_rect.setVisible(True)
+            if hasattr(block, 'handle_text'):
+                block.handle_text.setVisible(True)
+            
+            # Restore movement and selection
+            block.setFlag(QGraphicsWidget.GraphicsItemFlag.ItemIsMovable, True)
+            block.setFlag(QGraphicsWidget.GraphicsItemFlag.ItemIsSelectable, True)
+            block.setZValue(1)
+
 
 class PatchbayView(QGraphicsView):
     def __init__(self, card_index):
@@ -173,10 +597,17 @@ class PatchbayView(QGraphicsView):
         self.setDragMode(QGraphicsView.DragMode.RubberBandDrag)
         self.items = []
         self.scene.view = self
+        
+        # Group management
+        self.group_containers = []
+        
+        # Snap settings
+        self.SNAP_THRESHOLD = 20
+        self.SNAP_ALIGN_THRESHOLD = 30
+        self.MIN_ORTHOGONAL_OVERLAP = 10
+        
         self.populate_items()
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.sync_from_alsa)
-        self.timer.start(300)
+        # Don't start timer automatically - let the parent control polling
         self._panning = False
         self._zoom = 1.0
 
@@ -230,6 +661,7 @@ class PatchbayView(QGraphicsView):
             self._pan_start = event.pos()
             self.setCursor(Qt.CursorShape.ClosedHandCursor)
         super().mousePressEvent(event)
+        self.clear_snap_highlighting()
 
     def mouseMoveEvent(self, event):
         if self._panning:
@@ -238,12 +670,27 @@ class PatchbayView(QGraphicsView):
             self.horizontalScrollBar().setValue(self.horizontalScrollBar().value() - delta.x())
             self.verticalScrollBar().setValue(self.verticalScrollBar().value() - delta.y())
         super().mouseMoveEvent(event)
+        
+        # Update snap highlighting for selected items
+        for item in self.scene.selectedItems():
+            if isinstance(item, PatchbayChannel):
+                self.update_snap_highlighting(item)
 
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.MouseButton.MiddleButton:
             self._panning = False
             self.setCursor(Qt.CursorShape.ArrowCursor)
         super().mouseReleaseEvent(event)
+        
+        # Check for snapping opportunities
+        for item in self.scene.selectedItems():
+            if isinstance(item, PatchbayChannel):
+                self.check_for_snapping(item)
+        
+        # Only update group widgets if we're not currently dragging a group
+        # This prevents groups from snapping back to their original position
+        if not hasattr(self, '_dragging_group'):
+            self.update_group_widgets()
         self.update_scene_rect()
 
     def wheelEvent(self, event):
@@ -258,3 +705,134 @@ class PatchbayView(QGraphicsView):
             event.accept()
         else:
             super().wheelEvent(event)
+
+    def check_for_snapping(self, dragged_item):
+        """Check for snapping opportunities and apply them."""
+        candidates = self.get_snap_candidates(dragged_item)
+        
+        for candidate in candidates:
+            if candidate not in dragged_item.snapped_blocks:
+                # Snap the items together
+                dragged_item.add_to_group(candidate)
+                dragged_item.update_group_state()
+                candidate.update_group_state()
+                
+                # Don't update group widgets here - let mouseReleaseEvent handle it
+                break
+
+    def get_snap_candidates(self, dragged_item):
+        """Get potential snap candidates for the dragged item."""
+        candidates = []
+        dragged_rect = dragged_item.boundingRect()
+        dragged_pos = dragged_item.pos()
+        
+        for item in self.scene.items():
+            if not isinstance(item, PatchbayChannel) or item == dragged_item:
+                continue
+                
+            candidate_rect = item.boundingRect()
+            candidate_pos = item.pos()
+            
+            # Check if items are close enough to snap
+            if self._can_snap(dragged_rect, dragged_pos, candidate_rect, candidate_pos):
+                candidates.append(item)
+                
+        return candidates
+
+    def _can_snap(self, rect1, pos1, rect2, pos2):
+        """Check if two rectangles can snap together."""
+        # Calculate centers
+        center1 = pos1 + rect1.center()
+        center2 = pos2 + rect2.center()
+        
+        # Check horizontal snap
+        if abs(center1.x() - center2.x()) < self.SNAP_ALIGN_THRESHOLD:
+            # Check vertical overlap
+            y1_min, y1_max = pos1.y(), pos1.y() + rect1.height()
+            y2_min, y2_max = pos2.y(), pos2.y() + rect2.height()
+            
+            overlap = min(y1_max, y2_max) - max(y1_min, y2_min)
+            if overlap > self.MIN_ORTHOGONAL_OVERLAP:
+                return True
+                
+        # Check vertical snap
+        if abs(center1.y() - center2.y()) < self.SNAP_ALIGN_THRESHOLD:
+            # Check horizontal overlap
+            x1_min, x1_max = pos1.x(), pos1.x() + rect1.width()
+            x2_min, x2_max = pos2.x(), pos2.x() + rect2.width()
+            
+            overlap = min(x1_max, x2_max) - max(x1_min, x2_min)
+            if overlap > self.MIN_ORTHOGONAL_OVERLAP:
+                return True
+                
+        return False
+
+    def update_snap_highlighting(self, dragged_item):
+        """Update snap highlighting for the dragged item."""
+        self.clear_snap_highlighting()
+        
+        candidates = self.get_snap_candidates(dragged_item)
+        for candidate in candidates:
+            candidate.is_snap_target = True
+            candidate.update()
+
+    def clear_snap_highlighting(self):
+        """Clear all snap highlighting."""
+        for item in self.scene.items():
+            if isinstance(item, PatchbayChannel):
+                item.is_snap_target = False
+                item.update()
+
+    def clear_group_widgets(self):
+        """Clear all group containers."""
+        for container in self.group_containers:
+            # Clean up the container to restore blocks to their original state
+            container.cleanup()
+            self.scene.removeItem(container)
+        self.group_containers.clear()
+
+    def update_group_widgets(self):
+        """Update group containers based on current block groupings."""
+        self.clear_group_widgets()
+        self.create_group_containers()
+
+    def create_group_containers(self):
+        """Create group containers for snapped blocks."""
+        processed_blocks = set()
+        created_groups = 0
+        
+        print(f"[DEBUG] Starting group container creation. Total items in scene: {len(self.scene.items())}")
+        
+        for item in self.scene.items():
+            if not isinstance(item, PatchbayChannel):
+                continue
+                
+            if item in processed_blocks:
+                continue
+                
+            # Get all blocks in this group
+            group_blocks = item.get_all_grouped_blocks()
+            
+            # Only create containers for groups with 2+ blocks
+            if len(group_blocks) >= 2:
+                # Check if any blocks in this group are already processed
+                if any(block in processed_blocks for block in group_blocks):
+                    print(f"[DEBUG] Skipping group - some blocks already processed")
+                    continue
+                    
+                print(f"Creating group container for {len(group_blocks)} blocks")
+                try:
+                    # Create group container
+                    container = GroupContainer(group_blocks)
+                    self.scene.addItem(container)
+                    self.group_containers.append(container)
+                    
+                    # Mark all blocks as processed
+                    processed_blocks.update(group_blocks)
+                    created_groups += 1
+                    print(f"[SUCCESS] Group container created for {len(group_blocks)} blocks")
+                except Exception as e:
+                    print(f"[ERROR] Failed to create GroupContainer: {e}")
+                    # Don't mark blocks as processed if container creation failed
+        
+        print(f"[DEBUG] Group container creation complete. Created {created_groups} groups, processed {len(processed_blocks)} blocks")
