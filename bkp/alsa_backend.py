@@ -16,7 +16,9 @@ def get_all_controls(card_index=1):
     """
     try:
         mixer = alsaaudio.Mixer(cardindex=card_index)
-        return mixer.list()
+        controls = mixer.list()
+        print("ALSA controls detected:", controls)
+        return controls
     except Exception:
         # Fallback: scan all controls (more robust for complex devices)
         controls = []
@@ -28,7 +30,9 @@ def get_all_controls(card_index=1):
                     controls.append(ctl)
         except Exception:
             pass
+        print("ALSA controls detected (fallback):", controls)
         return controls
+
 
 def parse_control_name(name):
     """

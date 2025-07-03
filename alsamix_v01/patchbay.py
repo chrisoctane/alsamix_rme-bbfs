@@ -106,6 +106,10 @@ class ChannelBlock(QGraphicsWidget):
         # Use full ALSA control name for display
         display_name = ctl_name
         
+        # Connect to mute_solo_manager state_changed signal
+        from mute_solo_manager import get_mute_solo_manager
+        manager = get_mute_solo_manager()
+        manager.state_changed.connect(self.update_mute_solo_state)
 
     
     def _determine_channel_type(self, ctl_name: str) -> str:
@@ -126,7 +130,7 @@ class ChannelBlock(QGraphicsWidget):
         if not self.show_fader:
             return  # No buttons for non-fader channels
         
-        button_size = 14  # Match the updated button size
+        button_size = 20  # Was 14
         button_gap = 4   # Better separation
         start_x = 8      # Left side with gap
         start_y = 42     # Below label, above value
@@ -161,36 +165,62 @@ class ChannelBlock(QGraphicsWidget):
     
     def _create_button(self, text: str, x: float, y: float, color: str, tooltip: str):
         """Create a small rounded control button."""
-        button_size = 14  # Slightly larger for better visibility
+        button_size = 20  # Was 14
         
         # Create rounded button using custom painting in a proxy widget
         button = QPushButton(text)
         button.setFixedSize(button_size, button_size)
         button.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
+        
+        # Set initial state based on current mute/solo state
+        is_active = False
+        if text == "M":
+            is_active = self.muted
+        elif text == "S":
+            is_active = self.soloed
+        
+        # Choose color based on state
+        if is_active:
+            if text == "M":
+                active_color = "#ff0000"  # Bright red for active mute
+            else:  # Solo
+                active_color = "#00ff00"  # Bright green for active solo
+        else:
+            active_color = color
+        
         button.setStyleSheet(f"""
             QPushButton {{
                 background: transparent;
-                background-color: {color};
+                background-color: {active_color};
                 color: white;
-                border: 1px solid #333;
+                border: 2px solid #333;
                 border-radius: {button_size//2}px;
                 font-size: 6px;
                 font-weight: bold;
                 padding: 0px;
             }}
             QPushButton:hover {{
-                background-color: {color}aa;
+                background-color: {active_color}aa;
+                border: 2px solid #666;
             }}
             QPushButton:pressed {{
-                background-color: {color}77;
+                background-color: {active_color}77;
             }}
         """)
         
         # Add click handlers for mute and solo buttons
         if text == "M":
             button.clicked.connect(self._on_mute_clicked)
+            # Connect to flash signals for mute buttons
+            from mute_solo_manager import get_mute_solo_manager
+            manager = get_mute_solo_manager()
+            manager.flash_state_changed.connect(self._update_mute_flash)
         elif text == "S":
             button.clicked.connect(self._on_solo_clicked)
+            # Connect to flash signals for solo buttons
+            from mute_solo_manager import get_mute_solo_manager
+            manager = get_mute_solo_manager()
+            manager.flash_state_changed.connect(self._update_solo_flash)
         
         # Add button to scene via proxy with transparent background
         button_proxy = QGraphicsProxyWidget(self)
@@ -295,7 +325,12 @@ class ChannelBlock(QGraphicsWidget):
         
         # Draw rounded background with selective corner straightening
         painter.setPen(QPen(QColor("#FFD700"), 2 if self.isSelected() else 1))
-        bg_color = QColor("#2e3036")  # Lighter Bitwig-style dark grey
+        
+        # Use different background colors based on channel type
+        if self.is_output:
+            bg_color = QColor("#4a2a2a")  # Soft red for main outputs
+        else:
+            bg_color = QColor("#2e3036")  # Lighter Bitwig-style dark grey for inputs
         
         painter.setBrush(QBrush(bg_color))
         
@@ -466,23 +501,154 @@ class ChannelBlock(QGraphicsWidget):
         event.accept()
 
     def _on_mute_clicked(self):
-        """Toggle mute state for this channel."""
-        if not self.muted:
-            self.pre_mute_volume = self.fader_value
-            self.fader_value = 0
-            self.update_fader()
-            self.muted = True
-        else:
-            self.fader_value = self.pre_mute_volume
-            self.update_fader()
-            self.muted = False
+        from mute_solo_manager import get_mute_solo_manager
+        manager = get_mute_solo_manager()
+        new_mute_state = not manager.get_mute_state(self.ctl_name)
+        manager.set_mute(self.ctl_name, new_mute_state, explicit=True)
+        self.update_mute_solo_state()
 
     def _on_solo_clicked(self):
-        """Toggle solo state for this channel (stub: implement global solo logic)."""
-        self.soloed = not self.soloed
-        # TODO: Implement global solo logic to mute all other channels when any is soloed
+        from mute_solo_manager import get_mute_solo_manager
+        manager = get_mute_solo_manager()
+        new_solo_state = not manager.get_solo_state(self.ctl_name)
+        manager.set_solo(self.ctl_name, new_solo_state, explicit=True)
+        self.update_mute_solo_state()
 
+    def _update_button_states(self):
+        """Update the visual state of group mute/solo buttons (unified colorblind-friendly)."""
+        for button_proxy, button, tooltip in self.control_buttons:
+            if tooltip == "Mute":
+                is_active = self.muted
+                active_color = "#ff3333" if is_active else "#888888"
+            elif tooltip == "Solo":
+                is_active = self.soloed
+                active_color = "#ffe066" if is_active else "#888888"
+            else:
+                continue
+            button.setStyleSheet(f"""
+                QPushButton {{
+                    background: transparent;
+                    background-color: {active_color};
+                    color: black;
+                    border: 2px solid #333;
+                    border-radius: 10px;
+                    font-size: 6px;
+                    font-weight: bold;
+                    padding: 0px;
+                }}
+                QPushButton:hover {{
+                    background-color: {active_color}aa;
+                    border: 2px solid #666;
+                }}
+                QPushButton:pressed {{
+                    background-color: {active_color}77;
+                }}
+            """)
 
+    def _update_mute_flash(self, flash_on: bool):
+        """Update mute button flashing state (unified colorblind-friendly)."""
+        if not self.muted:
+            self._update_button_states()
+            return
+        for button_proxy, button, tooltip in self.control_buttons:
+            if tooltip == "Mute":
+                if flash_on:
+                    button.setStyleSheet(f"""
+                        QPushButton {{
+                            background: transparent;
+                            background-color: #ff3333;
+                            color: black;
+                            border: 2px solid #333;
+                            border-radius: 7px;
+                            font-size: 6px;
+                            font-weight: bold;
+                            padding: 0px;
+                        }}
+                        QPushButton:hover {{
+                            background-color: #ff3333aa;
+                            border: 2px solid #666;
+                        }}
+                        QPushButton:pressed {{
+                            background-color: #ff333377;
+                        }}
+                    """)
+                else:
+                    button.setStyleSheet(f"""
+                        QPushButton {{
+                            background: transparent;
+                            background-color: #888888;
+                            color: black;
+                            border: 2px solid #333;
+                            border-radius: 7px;
+                            font-size: 6px;
+                            font-weight: bold;
+                            padding: 0px;
+                        }}
+                        QPushButton:hover {{
+                            background-color: #888888aa;
+                            border: 2px solid #666;
+                        }}
+                        QPushButton:pressed {{
+                            background-color: #88888877;
+                        }}
+                    """)
+                break
+
+    def _update_solo_flash(self, flash_on: bool):
+        """Update solo button flashing state (unified colorblind-friendly)."""
+        if not self.soloed:
+            self._update_button_states()
+            return
+        for button_proxy, button, tooltip in self.control_buttons:
+            if tooltip == "Solo":
+                if flash_on:
+                    button.setStyleSheet(f"""
+                        QPushButton {{
+                            background: transparent;
+                            background-color: #ffe066;
+                            color: black;
+                            border: 2px solid #333;
+                            border-radius: 7px;
+                            font-size: 6px;
+                            font-weight: bold;
+                            padding: 0px;
+                        }}
+                        QPushButton:hover {{
+                            background-color: #ffe066aa;
+                            border: 2px solid #666;
+                        }}
+                        QPushButton:pressed {{
+                            background-color: #ffe06677;
+                        }}
+                    """)
+                else:
+                    button.setStyleSheet(f"""
+                        QPushButton {{
+                            background: transparent;
+                            background-color: #888888;
+                            color: black;
+                            border: 2px solid #333;
+                            border-radius: 7px;
+                            font-size: 6px;
+                            font-weight: bold;
+                            padding: 0px;
+                        }}
+                        QPushButton:hover {{
+                            background-color: #888888aa;
+                            border: 2px solid #666;
+                        }}
+                        QPushButton:pressed {{
+                            background-color: #88888877;
+                        }}
+                    """)
+                break
+
+    def update_mute_solo_state(self):
+        from mute_solo_manager import get_mute_solo_manager
+        manager = get_mute_solo_manager()
+        self.muted = manager.get_mute_state(self.ctl_name)
+        self.soloed = manager.get_solo_state(self.ctl_name)
+        self._update_button_states()
 
 
 class GroupWidget(QGraphicsWidget):
@@ -517,6 +683,15 @@ class GroupWidget(QGraphicsWidget):
         self.block2.current_group = self
         self.block1.hide()
         self.block2.hide()
+        
+        # Initialize mute/solo state from global manager
+        from mute_solo_manager import get_mute_solo_manager
+        manager = get_mute_solo_manager()
+        self.muted = manager.get_mute_state(self.block1.ctl_name)
+        self.soloed = manager.get_solo_state(self.block1.ctl_name)
+        
+        # Connect to mute_solo_manager state_changed signal
+        manager.state_changed.connect(self.update_mute_solo_state)
     
     def mousePressEvent(self, event: Optional[QGraphicsSceneMouseEvent]):
         """Handle mouse press events for ungrouping."""
@@ -729,7 +904,7 @@ class GroupWidget(QGraphicsWidget):
         has_line = (self.block1.channel_type == 'line' or self.block2.channel_type == 'line')
         has_output = (self.block1.channel_type == 'output' or self.block2.channel_type == 'output')
         
-        button_size = 14
+        button_size = 20
         button_gap = 4
         start_x = 8  # Left side with gap
         start_y = 45  # Below channel names, above sliders
@@ -751,8 +926,7 @@ class GroupWidget(QGraphicsWidget):
     
     def _create_group_button(self, text: str, x: float, y: float, color: str, tooltip: str):
         """Create a control button for the group."""
-        button_size = 14
-        
+        button_size = 20
         button = QPushButton(text)
         button.setFixedSize(button_size, button_size)
         button.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
@@ -761,27 +935,31 @@ class GroupWidget(QGraphicsWidget):
                 background: transparent;
                 background-color: {color};
                 color: white;
-                border: 1px solid #333;
-                border-radius: {button_size//2}px;
+                border: 2px solid #333;
+                border-radius: 10px;
                 font-size: 6px;
                 font-weight: bold;
                 padding: 0px;
             }}
             QPushButton:hover {{
                 background-color: {color}aa;
+                border: 2px solid #666;
             }}
             QPushButton:pressed {{
                 background-color: {color}77;
             }}
         """)
-        
         # Add click handlers for mute and solo buttons
         if text == "M":
             button.clicked.connect(self._on_mute_clicked)
+            from mute_solo_manager import get_mute_solo_manager
+            manager = get_mute_solo_manager()
+            manager.flash_state_changed.connect(self._update_mute_flash)
         elif text == "S":
             button.clicked.connect(self._on_solo_clicked)
-        
-        # Add button to scene via proxy
+            from mute_solo_manager import get_mute_solo_manager
+            manager = get_mute_solo_manager()
+            manager.flash_state_changed.connect(self._update_solo_flash)
         button_proxy = QGraphicsProxyWidget(self)
         button_proxy.setWidget(button)
         button_proxy.setPos(x, y)
@@ -790,10 +968,26 @@ class GroupWidget(QGraphicsWidget):
         palette = button_proxy.palette()
         palette.setColor(QPalette.ColorRole.Window, Qt.GlobalColor.transparent)
         button_proxy.setPalette(palette)
-        
-        # Store references
         self.control_buttons.append((button_proxy, button, tooltip))
-    
+
+    def _on_mute_clicked(self):
+        from mute_solo_manager import get_mute_solo_manager
+        manager = get_mute_solo_manager()
+        current_mute = manager.get_mute_state(self.block1.ctl_name)
+        new_mute_state = not current_mute
+        for block in [self.block1, self.block2]:
+            manager.set_mute(block.ctl_name, new_mute_state, explicit=True)
+        self.update_mute_solo_state()
+
+    def _on_solo_clicked(self):
+        from mute_solo_manager import get_mute_solo_manager
+        manager = get_mute_solo_manager()
+        current_solo = manager.get_solo_state(self.block1.ctl_name)
+        new_solo_state = not current_solo
+        for block in [self.block1, self.block2]:
+            manager.set_solo(block.ctl_name, new_solo_state, explicit=True)
+        self.update_mute_solo_state()
+
     def _on_crossfader_changed(self, value: int):
         """Handle crossfader changes."""
         # Calculate pan ratios (constant-power law)
@@ -881,29 +1075,121 @@ class GroupWidget(QGraphicsWidget):
         painter.setBackgroundMode(Qt.BGMode.OpaqueMode)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         
+        # Check if either block is a main output
+        is_output_group = self.block1.is_output or self.block2.is_output
+        
         # Draw background
         painter.setPen(QPen(QColor("#FFD700"), 2))
-        painter.setBrush(QBrush(QColor("#2e3036")))  # Lighter Bitwig-style dark grey
+        if is_output_group:
+            painter.setBrush(QBrush(QColor("#4a2a2a")))  # Soft red for output groups
+        else:
+            painter.setBrush(QBrush(QColor("#2e3036")))  # Lighter Bitwig-style dark grey for input groups
         painter.drawRoundedRect(self.boundingRect(), 12, 12)
 
-    def _on_mute_clicked(self):
-        """Toggle mute state for both blocks in the group."""
-        for block in [self.block1, self.block2]:
-            if not block.muted:
-                block.pre_mute_volume = block.fader_value
-                block.fader_value = 0
-                block.update_fader()
-                block.muted = True
-            else:
-                block.fader_value = block.pre_mute_volume
-                block.update_fader()
-                block.muted = False
+    def _update_mute_flash(self, flash_on: bool):
+        """Update mute button flashing state (unified colorblind-friendly)."""
+        if not self.muted:
+            self._update_button_states()
+            return
+        for button_proxy, button, tooltip in self.control_buttons:
+            if tooltip == "Mute":
+                if flash_on:
+                    button.setStyleSheet(f"""
+                        QPushButton {{
+                            background: transparent;
+                            background-color: #ff3333;
+                            color: black;
+                            border: 2px solid #333;
+                            border-radius: 7px;
+                            font-size: 6px;
+                            font-weight: bold;
+                            padding: 0px;
+                        }}
+                        QPushButton:hover {{
+                            background-color: #ff3333aa;
+                            border: 2px solid #666;
+                        }}
+                        QPushButton:pressed {{
+                            background-color: #ff333377;
+                        }}
+                    """)
+                else:
+                    button.setStyleSheet(f"""
+                        QPushButton {{
+                            background: transparent;
+                            background-color: #888888;
+                            color: black;
+                            border: 2px solid #333;
+                            border-radius: 7px;
+                            font-size: 6px;
+                            font-weight: bold;
+                            padding: 0px;
+                        }}
+                        QPushButton:hover {{
+                            background-color: #888888aa;
+                            border: 2px solid #666;
+                        }}
+                        QPushButton:pressed {{
+                            background-color: #88888877;
+                        }}
+                    """)
+                break
 
-    def _on_solo_clicked(self):
-        """Toggle solo state for both blocks in the group (stub: implement global solo logic)."""
-        for block in [self.block1, self.block2]:
-            block.soloed = not block.soloed
-        # TODO: Implement global solo logic to mute all other channels when any is soloed
+    def _update_solo_flash(self, flash_on: bool):
+        """Update solo button flashing state (unified colorblind-friendly)."""
+        if not self.soloed:
+            self._update_button_states()
+            return
+        for button_proxy, button, tooltip in self.control_buttons:
+            if tooltip == "Solo":
+                if flash_on:
+                    button.setStyleSheet(f"""
+                        QPushButton {{
+                            background: transparent;
+                            background-color: #ffe066;
+                            color: black;
+                            border: 2px solid #333;
+                            border-radius: 7px;
+                            font-size: 6px;
+                            font-weight: bold;
+                            padding: 0px;
+                        }}
+                        QPushButton:hover {{
+                            background-color: #ffe066aa;
+                            border: 2px solid #666;
+                        }}
+                        QPushButton:pressed {{
+                            background-color: #ffe06677;
+                        }}
+                    """)
+                else:
+                    button.setStyleSheet(f"""
+                        QPushButton {{
+                            background: transparent;
+                            background-color: #888888;
+                            color: black;
+                            border: 2px solid #333;
+                            border-radius: 7px;
+                            font-size: 6px;
+                            font-weight: bold;
+                            padding: 0px;
+                        }}
+                        QPushButton:hover {{
+                            background-color: #888888aa;
+                            border: 2px solid #666;
+                        }}
+                        QPushButton:pressed {{
+                            background-color: #88888877;
+                        }}
+                    """)
+                break
+
+    def update_mute_solo_state(self):
+        from mute_solo_manager import get_mute_solo_manager
+        manager = get_mute_solo_manager()
+        self.muted = manager.get_mute_state(self.block1.ctl_name) or manager.get_mute_state(self.block2.ctl_name)
+        self.soloed = manager.get_solo_state(self.block1.ctl_name) or manager.get_solo_state(self.block2.ctl_name)
+        self._update_button_states()
 
 
 class PatchbayView(QGraphicsView):

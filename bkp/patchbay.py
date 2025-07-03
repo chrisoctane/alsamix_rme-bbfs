@@ -22,7 +22,6 @@ from PyQt6.QtWidgets import QStyleOptionSlider
 import alsa_backend
 import math
 import alsaaudio
-from oval_slider import OvalGrooveSlider
 
 
 class ChannelBlock(QGraphicsWidget):
@@ -235,28 +234,33 @@ class ChannelBlock(QGraphicsWidget):
     
     def _create_fader(self):
         """Create the fader using QSlider for consistent styling."""
+        # Position fader on the right side with equal gaps (15px from edges)
         gap = 15
-        block_height = self.HEIGHT
-        fader_height = 100
         fader_x = self.WIDTH - 20 - gap  # Right side with gap
-        fader_y_centered = (block_height - fader_height) // 2
-
+        fader_y = gap + 25  # Top gap plus space for label
+        
         # Create QSlider with same styling as group widgets
         self.fader_slider = OvalGrooveSlider(Qt.Orientation.Vertical, handle_color="#3f7fff", groove_color="#222")
         self.fader_slider.setRange(0, 100)
         self.fader_slider.setValue(self.fader_value)
-        self.fader_slider.setFixedSize(20, fader_height)
+        self.fader_slider.setFixedSize(20, 60)
+        
+        # Connect slider to volume changes
         self.fader_slider.valueChanged.connect(self._on_fader_changed)
-
+        
         # Add slider to graphics scene via proxy
         self.fader_proxy = QGraphicsProxyWidget(self)
         self.fader_proxy.setWidget(self.fader_slider)
+        self.fader_proxy.setPos(fader_x, fader_y)
+        
+        # Vertically center fader and value text
+        block_height = self.HEIGHT
+        fader_height = 60
+        fader_y_centered = (block_height - fader_height) // 2
         self.fader_proxy.setPos(fader_x, fader_y_centered)
-
-        # Value readout stacked vertically to the left of fader
         value_rect = self.value_text.boundingRect()
-        value_x = fader_x - value_rect.width() - 6  # 6px gap to left of fader
-        value_y = fader_y_centered + (fader_height - value_rect.height()) / 2
+        value_x = fader_x + (20 - value_rect.width()) / 2  # Center under fader
+        value_y = fader_y_centered + fader_height + 5  # 5px below fader
         self.value_text.setPos(value_x, value_y)
     
     def _on_fader_changed(self, value: int):
@@ -761,8 +765,6 @@ class GroupWidget(QGraphicsWidget):
         """Create the group controls."""
         # Channel names centered at top on two lines - use full ALSA names
         width = self.geometry().width()
-        gap = 15
-        height = self.geometry().height()
         
         # First channel name - top line (full ALSA name)
         channel1_name = QGraphicsTextItem(self.block1.ctl_name, self)
@@ -784,46 +786,56 @@ class GroupWidget(QGraphicsWidget):
         name2_x = (width - name2_rect.width()) / 2
         channel2_name.setPos(name2_x, 22)
         
-        # Crossfader (horizontal) - match macro fader height for width
+        # Crossfader (horizontal) - centered at bottom like macro fader on right
+        gap = 15
+        height = self.geometry().height()
+        
         self.crossfader = OvalGrooveSlider(Qt.Orientation.Horizontal, handle_color="#3f7fff", groove_color="#222")
         self.crossfader.setRange(0, 100)
         self.crossfader.setValue(50)
-        macro_height = 100
-        self.crossfader.setFixedSize(macro_height, 20)
+        self.crossfader.setFixedSize(140, 20)
         
         crossfader_proxy = QGraphicsProxyWidget(self)
         crossfader_proxy.setWidget(self.crossfader)
-        crossfader_x = (width - macro_height) / 2
+        # Center horizontally, position at bottom with gap
+        crossfader_x = (width - 140) / 2
         crossfader_y = height - 20 - gap
         crossfader_proxy.setPos(crossfader_x, crossfader_y)
         
-        # Macro fader (vertical) - make taller
+        # Macro fader (vertical) - match single channel fader position
         self.macro_fader = OvalGrooveSlider(Qt.Orientation.Vertical, handle_color="#ff3f7f", groove_color="#222")
         self.macro_fader.setRange(0, 100)
         self.macro_fader.setValue(100)
-        self.macro_fader.setFixedSize(20, macro_height)
+        self.macro_fader.setFixedSize(20, 60)
         
         macro_proxy = QGraphicsProxyWidget(self)
         macro_proxy.setWidget(self.macro_fader)
-        macro_x = width - 20 - gap  # Right side with gap
-        group_height = self.geometry().height()
-        macro_y_centered = (group_height - macro_height) // 2
-        macro_proxy.setPos(macro_x, macro_y_centered)
+        # Match individual channel fader positioning exactly
+        macro_x = width - 20 - gap  # Right side with gap (same as individual blocks)
+        macro_y = gap + 25  # Match individual block fader Y position (gap + 25)
+        macro_proxy.setPos(macro_x, macro_y)
         
-        # Volume indicators stacked vertically to the left of macro fader
+        # Volume indicators for each channel - positioned side by side under macro fader
         self.vol1_text = QGraphicsTextItem("100", self)
         self.vol1_text.setDefaultTextColor(QColor("#3f7fff"))
         self.vol1_text.setFont(QFont("Sans", 7))
         self.vol2_text = QGraphicsTextItem("100", self)
         self.vol2_text.setDefaultTextColor(QColor("#ff3f7f"))
         self.vol2_text.setFont(QFont("Sans", 7))
+        # Vertically center macro fader and value texts
+        group_height = self.geometry().height()
+        macro_height = 60
+        macro_y_centered = (group_height - macro_height) // 2
+        macro_proxy.setPos(macro_x, macro_y_centered)
         vol1_rect = self.vol1_text.boundingRect()
         vol2_rect = self.vol2_text.boundingRect()
-        vol_x = macro_x - vol1_rect.width() - 6  # 6px gap to left of macro fader
-        vol1_y = macro_y_centered + (macro_height - (vol1_rect.height() + vol2_rect.height() + 4)) / 2
-        vol2_y = vol1_y + vol1_rect.height() + 4  # 4px gap between values
-        self.vol1_text.setPos(vol_x, vol1_y)
-        self.vol2_text.setPos(vol_x, vol2_y)
+        total_width = vol1_rect.width() + vol2_rect.width()  # 0px gap
+        base_x = macro_x + (20 - total_width) / 2
+        vol1_x = base_x
+        vol2_x = base_x + vol1_rect.width()
+        base_y = macro_y_centered + macro_height + 5  # 5px below macro fader
+        self.vol1_text.setPos(vol1_x, base_y)
+        self.vol2_text.setPos(vol2_x, base_y)
         
         # No labels needed for crossfader and macro fader
         

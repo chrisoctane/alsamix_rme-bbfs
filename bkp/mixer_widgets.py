@@ -35,8 +35,8 @@ class ElidedLabel(QWidget):
     def __init__(self, text, parent=None):
         super().__init__(parent)
         self.text = text
-        self.font = QFont("Inter", 10, QFont.Weight.Bold)
-        self.fm = QFontMetrics(self.font)
+        self._font = QFont("Inter", 10, QFont.Weight.Bold)
+        self.fm = QFontMetrics(self._font)
         # The width of the vertical text becomes the height of the widget
         self.text_width = self.fm.horizontalAdvance(self.text)
         self.setMinimumSize(self.sizeHint())
@@ -48,7 +48,7 @@ class ElidedLabel(QWidget):
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setPen(Colors["text_light"])
-        painter.setFont(self.font)
+        painter.setFont(self._font)
 
         # Center the rotation point
         painter.translate(self.width() / 2, self.height() / 2)
@@ -177,10 +177,63 @@ class ChannelStrip(QWidget):
         control_axis_layout.addStretch()
 
         bottom_buttons_layout = QVBoxLayout()
-        btn_mute = QPushButton("M")
-        btn_solo = QPushButton("S")
-        bottom_buttons_layout.addWidget(btn_mute)
-        bottom_buttons_layout.addWidget(btn_solo)
+        # --- Patchbay-style mute/solo buttons (always circles) ---
+        button_size = 20
+        self.btn_mute = QPushButton("M")
+        self.btn_solo = QPushButton("S")
+        self.btn_mute.setCheckable(True)
+        self.btn_solo.setCheckable(True)
+        self.btn_mute.setFixedSize(button_size, button_size)
+        self.btn_solo.setFixedSize(button_size, button_size)
+        self.btn_mute.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
+        self.btn_solo.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
+        self.btn_mute.clicked.connect(self._on_mute_clicked)
+        self.btn_solo.clicked.connect(self._on_solo_clicked)
+        from mute_solo_manager import get_mute_solo_manager
+        manager = get_mute_solo_manager()
+        manager.flash_state_changed.connect(self._update_mute_flash)
+        manager.flash_state_changed.connect(self._update_solo_flash)
+        bottom_buttons_layout.addWidget(self.btn_mute)
+        bottom_buttons_layout.addWidget(self.btn_solo)
+        # Always use circular style for mute/solo
+        self.btn_mute.setStyleSheet(f"""
+            QPushButton {{
+                background: transparent;
+                background-color: #888888;
+                color: white;
+                border: 2px solid #333;
+                border-radius: {button_size//2}px;
+                font-size: 6px;
+                font-weight: bold;
+                padding: 0px;
+            }}
+            QPushButton:hover {{
+                background-color: #888888aa;
+                border: 2px solid #666;
+            }}
+            QPushButton:pressed {{
+                background-color: #88888877;
+            }}
+        """)
+        self.btn_solo.setStyleSheet(f"""
+            QPushButton {{
+                background: transparent;
+                background-color: #888888;
+                color: white;
+                border: 2px solid #333;
+                border-radius: {button_size//2}px;
+                font-size: 6px;
+                font-weight: bold;
+                padding: 0px;
+            }}
+            QPushButton:hover {{
+                background-color: #888888aa;
+                border: 2px solid #666;
+            }}
+            QPushButton:pressed {{
+                background-color: #88888877;
+            }}
+        """)
         control_axis_layout.addLayout(bottom_buttons_layout)
 
         controls_layout.addWidget(control_axis_widget)
@@ -206,9 +259,10 @@ class ChannelStrip(QWidget):
         # Remove old
         for i in reversed(range(self.pan_layout.count())):
             item = self.pan_layout.takeAt(i)
-            widget = item.widget()
-            if widget is not None:
-                widget.setParent(None)
+            if item is not None:
+                widget = item.widget() if hasattr(item, 'widget') else None
+                if widget is not None:
+                    widget.setParent(None)
         # Linked: no individual pan; shown only on one strip (balance for pair in StereoPairStrip)
         if self.linked:
             self.pan = PanControl("Balance", 0)
@@ -257,33 +311,104 @@ class ChannelStrip(QWidget):
             alsa_backend.set_volume(func_ctrl, int(checked))
         except Exception:
             pass
+    
+    def _on_mute_clicked(self):
+        """Handle mute button click using global manager."""
+        from mute_solo_manager import get_mute_solo_manager
+        manager = get_mute_solo_manager()
+        # Toggle mute state
+        new_mute_state = not manager.get_mute_state(self.channel_name)
+        manager.set_mute(self.channel_name, new_mute_state, explicit=True)
+        # Update button state
+        self.btn_mute.setChecked(new_mute_state)
+    
+    def _on_solo_clicked(self):
+        """Handle solo button click using global manager."""
+        from mute_solo_manager import get_mute_solo_manager
+        manager = get_mute_solo_manager()
+        # Toggle solo state
+        new_solo_state = not manager.get_solo_state(self.channel_name)
+        manager.set_solo(self.channel_name, new_solo_state, explicit=True)
+        # Update button state
+        self.btn_solo.setChecked(new_solo_state)
+    
+    def update_mute_solo_state(self):
+        """Update mute/solo button states from global manager."""
+        from mute_solo_manager import get_mute_solo_manager
+        manager = get_mute_solo_manager()
+        
+        # Update mute button
+        mute_state = manager.get_mute_state(self.channel_name)
+        self.btn_mute.setChecked(mute_state)
+        
+        # Update solo button
+        solo_state = manager.get_solo_state(self.channel_name)
+        self.btn_solo.setChecked(solo_state)
 
     def set_button_styles(self):
-        btn_style = f"""
-            QPushButton {{
-                background-color: #4a5568;
-                color: #cbd5e0;
-                border: none;
-                border-radius: 6px;
-                font-size: 11px;
-                font-weight: bold;
-                min-width: 32px;
-                max-width: 32px;
-                min-height: 24px;
-                max-height: 24px;
-            }}
-            QPushButton:checked {{
-                background-color: #f08080;
-                color: white;
-            }}
-        """
-        self.setStyleSheet(self.styleSheet() + btn_style)
+        # Remove old style logic for mute/solo buttons
+        pass
 
-        for btn in self.findChildren(QPushButton):
-            if btn.text() == "S":
-                btn.setStyleSheet(btn.styleSheet() + f"QPushButton:checked {{ background-color: #fffacd; color: black; }}")
-            if btn.text() == "L":
-                btn.setStyleSheet(btn.styleSheet() + f"QPushButton:checked {{ background-color: #87ceeb; }}")
+    def _update_mute_flash(self, flash_on: bool):
+        from mute_solo_manager import get_mute_solo_manager
+        manager = get_mute_solo_manager()
+        is_muted = manager.get_mute_state(self.channel_name)
+        explicit_mute = False
+        if self.channel_name in manager.channel_states:
+            explicit_mute = manager.channel_states[self.channel_name].explicit_mute
+        if not is_muted:
+            color = "#888888"
+        elif explicit_mute:
+            color = "#ff0000"
+        else:
+            color = "#ff0000" if flash_on else "#660000"
+        self.btn_mute.setStyleSheet(f"""
+            QPushButton {{
+                background: transparent;
+                background-color: {color};
+                color: white;
+                border: 2px solid #333;
+                border-radius: {self.btn_mute.width()//2}px;
+                font-size: 6px;
+                font-weight: bold;
+                padding: 0px;
+            }}
+            QPushButton:hover {{
+                background-color: {color}aa;
+                border: 2px solid #666;
+            }}
+            QPushButton:pressed {{
+                background-color: {color}77;
+            }}
+        """)
+
+    def _update_solo_flash(self, flash_on: bool):
+        from mute_solo_manager import get_mute_solo_manager
+        manager = get_mute_solo_manager()
+        is_soloed = manager.get_solo_state(self.channel_name)
+        if not is_soloed:
+            color = "#888888"
+        else:
+            color = "#ffe066" if flash_on else "#7a6a00"
+        self.btn_solo.setStyleSheet(f"""
+            QPushButton {{
+                background: transparent;
+                background-color: {color};
+                color: white;
+                border: 2px solid #333;
+                border-radius: {self.btn_solo.width()//2}px;
+                font-size: 6px;
+                font-weight: bold;
+                padding: 0px;
+            }}
+            QPushButton:hover {{
+                background-color: {color}aa;
+                border: 2px solid #666;
+            }}
+            QPushButton:pressed {{
+                background-color: {color}77;
+            }}
+        """)
 
 class StereoPairStrip(QWidget):
     def __init__(self, lname, rname, functions=None, parent=None):
@@ -396,8 +521,9 @@ class MixerGroupWidget(QWidget):
         v_layout.addLayout(h_layout)
 
         # Wrap everything in a "card"
-        card = GroupCardWidget(QWidget())
-        card.layout().addLayout(v_layout)
+        content_widget = QWidget()
+        content_widget.setLayout(v_layout)
+        card = GroupCardWidget(content_widget)
         outer_layout = QVBoxLayout(self)
         outer_layout.setContentsMargins(6, 6, 6, 6)
         outer_layout.addWidget(card)
