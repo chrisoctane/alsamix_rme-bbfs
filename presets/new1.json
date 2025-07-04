@@ -1,0 +1,4471 @@
+{
+  "name": "new1",
+  "description": "",
+  "version": "2.0",
+  "main_mix_levels": {
+    "Main-Out ADAT3": 0,
+    "Main-Out ADAT4": 0,
+    "Main-Out ADAT5": 0,
+    "Main-Out ADAT6": 0,
+    "Main-Out ADAT7": 0,
+    "Main-Out ADAT8": 0,
+    "Main-Out AN1": 60,
+    "Main-Out AN2": 60,
+    "Main-Out AS1": 0,
+    "Main-Out AS2": 5,
+    "Main-Out PH3": 50,
+    "Main-Out PH4": 50
+  },
+  "input_gains": {
+    "Line-IN3 Gain": 0,
+    "Line-IN4 Gain": 0,
+    "Mic-AN1 Gain": 0,
+    "Mic-AN2 Gain": 0
+  },
+  "mute_states": {},
+  "solo_states": {},
+  "hardware_settings": {
+    "Mic-AN1 48V": -2147483648,
+    "Mic-AN1 PAD": -2147483648,
+    "Mic-AN2 48V": -2147483648,
+    "Mic-AN2 PAD": -2147483648,
+    "IEC958": -2147483648,
+    "IEC958 Emphasis": -2147483648,
+    "IEC958 Pro Mask": -2147483648,
+    "Sample Clock Source": -2147483648
+  },
+  "routing_matrix": {
+    "PCM-ADAT3": {
+      "ADAT3": 0,
+      "ADAT4": 100,
+      "ADAT5": 0,
+      "ADAT6": 100,
+      "ADAT7": 0,
+      "ADAT8": 100,
+      "AN1": 0,
+      "AN2": 0,
+      "AS1": 0,
+      "AS2": 0,
+      "PH3": 0,
+      "PH4": 0
+    },
+    "PCM-ADAT4": {
+      "ADAT3": 0,
+      "ADAT4": 0,
+      "ADAT5": 60,
+      "ADAT6": 0,
+      "ADAT7": 0,
+      "ADAT8": 0,
+      "AN1": 0,
+      "AN2": 0,
+      "AS1": 0,
+      "AS2": 0,
+      "PH3": 0,
+      "PH4": 0
+    },
+    "PCM-ADAT5": {
+      "ADAT3": 0,
+      "ADAT4": 40,
+      "ADAT5": 0,
+      "ADAT6": 0,
+      "ADAT7": 0,
+      "ADAT8": 0,
+      "AN1": 67,
+      "AN2": 67,
+      "AS1": 70,
+      "AS2": 70,
+      "PH3": 0,
+      "PH4": 80
+    },
+    "PCM-ADAT6": {
+      "ADAT3": 60,
+      "ADAT4": 0,
+      "ADAT5": 15,
+      "ADAT6": 0,
+      "ADAT7": 0,
+      "ADAT8": 55,
+      "AN1": 0,
+      "AN2": 0,
+      "AS1": 0,
+      "AS2": 0,
+      "PH3": 0,
+      "PH4": 0
+    },
+    "PCM-ADAT7": {
+      "ADAT3": 0,
+      "ADAT4": 0,
+      "ADAT5": 0,
+      "ADAT6": 0,
+      "ADAT7": 0,
+      "ADAT8": 0,
+      "AN1": 0,
+      "AN2": 0,
+      "AS1": 0,
+      "AS2": 0,
+      "PH3": 0,
+      "PH4": 0
+    },
+    "PCM-ADAT8": {
+      "ADAT3": 0,
+      "ADAT4": 0,
+      "ADAT5": 0,
+      "ADAT6": 0,
+      "ADAT7": 0,
+      "ADAT8": 0,
+      "AN1": 0,
+      "AN2": 0,
+      "AS1": 0,
+      "AS2": 0,
+      "PH3": 0,
+      "PH4": 0
+    },
+    "PCM-AN1": {
+      "ADAT3": 0,
+      "ADAT4": 0,
+      "ADAT5": 0,
+      "ADAT6": 0,
+      "ADAT7": 0,
+      "ADAT8": 0,
+      "AN1": 100,
+      "AN2": 0,
+      "AS1": 0,
+      "AS2": 0,
+      "PH3": 0,
+      "PH4": 0
+    },
+    "PCM-AN2": {
+      "ADAT3": 0,
+      "ADAT4": 0,
+      "ADAT5": 0,
+      "ADAT6": 0,
+      "ADAT7": 0,
+      "ADAT8": 0,
+      "AN1": 0,
+      "AN2": 100,
+      "AS1": 0,
+      "AS2": 0,
+      "PH3": 0,
+      "PH4": 0
+    },
+    "PCM-AS1": {
+      "ADAT3": 0,
+      "ADAT4": 0,
+      "ADAT5": 0,
+      "ADAT6": 0,
+      "ADAT7": 0,
+      "ADAT8": 0,
+      "AN1": 0,
+      "AN2": 0,
+      "AS1": 0,
+      "AS2": 0,
+      "PH3": 0,
+      "PH4": 0
+    },
+    "PCM-AS2": {
+      "ADAT3": 0,
+      "ADAT4": 0,
+      "ADAT5": 0,
+      "ADAT6": 0,
+      "ADAT7": 0,
+      "ADAT8": 0,
+      "AN1": 0,
+      "AN2": 0,
+      "AS1": 0,
+      "AS2": 0,
+      "PH3": 0,
+      "PH4": 0
+    },
+    "PCM-PH3": {
+      "ADAT3": 0,
+      "ADAT4": 0,
+      "ADAT5": 0,
+      "ADAT6": 0,
+      "ADAT7": 0,
+      "ADAT8": 0,
+      "AN1": 0,
+      "AN2": 0,
+      "AS1": 0,
+      "AS2": 0,
+      "PH3": 0,
+      "PH4": 0
+    },
+    "PCM-PH4": {
+      "ADAT3": 0,
+      "ADAT4": 0,
+      "ADAT5": 0,
+      "ADAT6": 0,
+      "ADAT7": 0,
+      "ADAT8": 0,
+      "AN1": 0,
+      "AN2": 0,
+      "AS1": 0,
+      "AS2": 0,
+      "PH3": 0,
+      "PH4": 0
+    },
+    "Line-ADAT3": {
+      "ADAT3": 0,
+      "ADAT4": 0,
+      "ADAT5": 0,
+      "ADAT6": 0,
+      "ADAT7": 0,
+      "ADAT8": 0,
+      "AN1": 0,
+      "AN2": 0,
+      "AS1": 0,
+      "AS2": 0,
+      "PH3": 0,
+      "PH4": 0
+    },
+    "Line-ADAT4": {
+      "ADAT3": 0,
+      "ADAT4": 0,
+      "ADAT5": 0,
+      "ADAT6": 0,
+      "ADAT7": 0,
+      "ADAT8": 0,
+      "AN1": 0,
+      "AN2": 0,
+      "AS1": 0,
+      "AS2": 0,
+      "PH3": 0,
+      "PH4": 0
+    },
+    "Line-ADAT5": {
+      "ADAT3": 0,
+      "ADAT4": 0,
+      "ADAT5": 0,
+      "ADAT6": 0,
+      "ADAT7": 0,
+      "ADAT8": 0,
+      "AN1": 0,
+      "AN2": 0,
+      "AS1": 0,
+      "AS2": 0,
+      "PH3": 0,
+      "PH4": 0
+    },
+    "Line-ADAT6": {
+      "ADAT3": 0,
+      "ADAT4": 0,
+      "ADAT5": 0,
+      "ADAT6": 0,
+      "ADAT7": 0,
+      "ADAT8": 0,
+      "AN1": 0,
+      "AN2": 0,
+      "AS1": 0,
+      "AS2": 0,
+      "PH3": 0,
+      "PH4": 0
+    },
+    "Line-ADAT7": {
+      "ADAT3": 0,
+      "ADAT4": 0,
+      "ADAT5": 0,
+      "ADAT6": 0,
+      "ADAT7": 0,
+      "ADAT8": 0,
+      "AN1": 0,
+      "AN2": 0,
+      "AS1": 0,
+      "AS2": 0,
+      "PH3": 0,
+      "PH4": 0
+    },
+    "Line-ADAT8": {
+      "ADAT3": 0,
+      "ADAT4": 0,
+      "ADAT5": 0,
+      "ADAT6": 0,
+      "ADAT7": 0,
+      "ADAT8": 0,
+      "AN1": 0,
+      "AN2": 0,
+      "AS1": 0,
+      "AS2": 0,
+      "PH3": 0,
+      "PH4": 0
+    },
+    "Line-AS1": {
+      "ADAT3": 0,
+      "ADAT4": 0,
+      "ADAT5": 0,
+      "ADAT6": 0,
+      "ADAT7": 0,
+      "ADAT8": 0,
+      "AN1": 0,
+      "AN2": 0,
+      "AS1": 0,
+      "AS2": 0,
+      "PH3": 0,
+      "PH4": 0
+    },
+    "Line-AS2": {
+      "ADAT3": 0,
+      "ADAT4": 0,
+      "ADAT5": 0,
+      "ADAT6": 0,
+      "ADAT7": 0,
+      "ADAT8": 0,
+      "AN1": 0,
+      "AN2": 0,
+      "AS1": 0,
+      "AS2": 0,
+      "PH3": 0,
+      "PH4": 0
+    },
+    "Line-IN3": {
+      "ADAT3": 0,
+      "ADAT4": 0,
+      "ADAT5": 0,
+      "ADAT6": 0,
+      "ADAT7": 0,
+      "ADAT8": 0,
+      "AN1": 0,
+      "AN2": 0,
+      "AS1": 0,
+      "AS2": 0,
+      "PH3": 0,
+      "PH4": 0
+    },
+    "Line-IN4": {
+      "ADAT3": 0,
+      "ADAT4": 0,
+      "ADAT5": 0,
+      "ADAT6": 0,
+      "ADAT7": 0,
+      "ADAT8": 0,
+      "AN1": 0,
+      "AN2": 0,
+      "AS1": 0,
+      "AS2": 0,
+      "PH3": 0,
+      "PH4": 0
+    },
+    "Mic-AN1": {
+      "ADAT3": 0,
+      "ADAT4": 0,
+      "ADAT5": 0,
+      "ADAT6": 0,
+      "ADAT7": 0,
+      "ADAT8": 0,
+      "AN1": 100,
+      "AN2": 0,
+      "AS1": 0,
+      "AS2": 0,
+      "PH3": 0,
+      "PH4": 0
+    },
+    "Mic-AN2": {
+      "ADAT3": 0,
+      "ADAT4": 0,
+      "ADAT5": 0,
+      "ADAT6": 0,
+      "ADAT7": 0,
+      "ADAT8": 0,
+      "AN1": 0,
+      "AN2": 100,
+      "AS1": 0,
+      "AS2": 0,
+      "PH3": 0,
+      "PH4": 0
+    }
+  },
+  "alsa_state": {
+    "PCM-ADAT3-ADAT3": 0,
+    "PCM-ADAT3-ADAT4": 100,
+    "PCM-ADAT3-ADAT5": 0,
+    "PCM-ADAT3-ADAT6": 100,
+    "PCM-ADAT3-ADAT7": 0,
+    "PCM-ADAT3-ADAT8": 100,
+    "PCM-ADAT3-AN1": 0,
+    "PCM-ADAT3-AN2": 0,
+    "PCM-ADAT3-AS1": 0,
+    "PCM-ADAT3-AS2": 0,
+    "PCM-ADAT3-PH3": 0,
+    "PCM-ADAT3-PH4": 0,
+    "PCM-ADAT4-ADAT3": 0,
+    "PCM-ADAT4-ADAT4": 0,
+    "PCM-ADAT4-ADAT5": 60,
+    "PCM-ADAT4-ADAT6": 0,
+    "PCM-ADAT4-ADAT7": 0,
+    "PCM-ADAT4-ADAT8": 0,
+    "PCM-ADAT4-AN1": 0,
+    "PCM-ADAT4-AN2": 0,
+    "PCM-ADAT4-AS1": 0,
+    "PCM-ADAT4-AS2": 0,
+    "PCM-ADAT4-PH3": 0,
+    "PCM-ADAT4-PH4": 0,
+    "PCM-ADAT5-ADAT3": 0,
+    "PCM-ADAT5-ADAT4": 40,
+    "PCM-ADAT5-ADAT5": 0,
+    "PCM-ADAT5-ADAT6": 0,
+    "PCM-ADAT5-ADAT7": 0,
+    "PCM-ADAT5-ADAT8": 0,
+    "PCM-ADAT5-AN1": 67,
+    "PCM-ADAT5-AN2": 67,
+    "PCM-ADAT5-AS1": 70,
+    "PCM-ADAT5-AS2": 70,
+    "PCM-ADAT5-PH3": 0,
+    "PCM-ADAT5-PH4": 80,
+    "PCM-ADAT6-ADAT3": 60,
+    "PCM-ADAT6-ADAT4": 0,
+    "PCM-ADAT6-ADAT5": 15,
+    "PCM-ADAT6-ADAT6": 0,
+    "PCM-ADAT6-ADAT7": 0,
+    "PCM-ADAT6-ADAT8": 55,
+    "PCM-ADAT6-AN1": 0,
+    "PCM-ADAT6-AN2": 0,
+    "PCM-ADAT6-AS1": 0,
+    "PCM-ADAT6-AS2": 0,
+    "PCM-ADAT6-PH3": 0,
+    "PCM-ADAT6-PH4": 0,
+    "PCM-ADAT7-ADAT3": 0,
+    "PCM-ADAT7-ADAT4": 0,
+    "PCM-ADAT7-ADAT5": 0,
+    "PCM-ADAT7-ADAT6": 0,
+    "PCM-ADAT7-ADAT7": 0,
+    "PCM-ADAT7-ADAT8": 0,
+    "PCM-ADAT7-AN1": 0,
+    "PCM-ADAT7-AN2": 0,
+    "PCM-ADAT7-AS1": 0,
+    "PCM-ADAT7-AS2": 0,
+    "PCM-ADAT7-PH3": 0,
+    "PCM-ADAT7-PH4": 0,
+    "PCM-ADAT8-ADAT3": 0,
+    "PCM-ADAT8-ADAT4": 0,
+    "PCM-ADAT8-ADAT5": 0,
+    "PCM-ADAT8-ADAT6": 0,
+    "PCM-ADAT8-ADAT7": 0,
+    "PCM-ADAT8-ADAT8": 0,
+    "PCM-ADAT8-AN1": 0,
+    "PCM-ADAT8-AN2": 0,
+    "PCM-ADAT8-AS1": 0,
+    "PCM-ADAT8-AS2": 0,
+    "PCM-ADAT8-PH3": 0,
+    "PCM-ADAT8-PH4": 0,
+    "PCM-AN1-ADAT3": 0,
+    "PCM-AN1-ADAT4": 0,
+    "PCM-AN1-ADAT5": 0,
+    "PCM-AN1-ADAT6": 0,
+    "PCM-AN1-ADAT7": 0,
+    "PCM-AN1-ADAT8": 0,
+    "PCM-AN1-AN1": 100,
+    "PCM-AN1-AN2": 0,
+    "PCM-AN1-AS1": 0,
+    "PCM-AN1-AS2": 0,
+    "PCM-AN1-PH3": 0,
+    "PCM-AN1-PH4": 0,
+    "PCM-AN2-ADAT3": 0,
+    "PCM-AN2-ADAT4": 0,
+    "PCM-AN2-ADAT5": 0,
+    "PCM-AN2-ADAT6": 0,
+    "PCM-AN2-ADAT7": 0,
+    "PCM-AN2-ADAT8": 0,
+    "PCM-AN2-AN1": 0,
+    "PCM-AN2-AN2": 100,
+    "PCM-AN2-AS1": 0,
+    "PCM-AN2-AS2": 0,
+    "PCM-AN2-PH3": 0,
+    "PCM-AN2-PH4": 0,
+    "PCM-AS1-ADAT3": 0,
+    "PCM-AS1-ADAT4": 0,
+    "PCM-AS1-ADAT5": 0,
+    "PCM-AS1-ADAT6": 0,
+    "PCM-AS1-ADAT7": 0,
+    "PCM-AS1-ADAT8": 0,
+    "PCM-AS1-AN1": 0,
+    "PCM-AS1-AN2": 0,
+    "PCM-AS1-AS1": 0,
+    "PCM-AS1-AS2": 0,
+    "PCM-AS1-PH3": 0,
+    "PCM-AS1-PH4": 0,
+    "PCM-AS2-ADAT3": 0,
+    "PCM-AS2-ADAT4": 0,
+    "PCM-AS2-ADAT5": 0,
+    "PCM-AS2-ADAT6": 0,
+    "PCM-AS2-ADAT7": 0,
+    "PCM-AS2-ADAT8": 0,
+    "PCM-AS2-AN1": 0,
+    "PCM-AS2-AN2": 0,
+    "PCM-AS2-AS1": 0,
+    "PCM-AS2-AS2": 0,
+    "PCM-AS2-PH3": 0,
+    "PCM-AS2-PH4": 0,
+    "PCM-PH3-ADAT3": 0,
+    "PCM-PH3-ADAT4": 0,
+    "PCM-PH3-ADAT5": 0,
+    "PCM-PH3-ADAT6": 0,
+    "PCM-PH3-ADAT7": 0,
+    "PCM-PH3-ADAT8": 0,
+    "PCM-PH3-AN1": 0,
+    "PCM-PH3-AN2": 0,
+    "PCM-PH3-AS1": 0,
+    "PCM-PH3-AS2": 0,
+    "PCM-PH3-PH3": 0,
+    "PCM-PH3-PH4": 0,
+    "PCM-PH4-ADAT3": 0,
+    "PCM-PH4-ADAT4": 0,
+    "PCM-PH4-ADAT5": 0,
+    "PCM-PH4-ADAT6": 0,
+    "PCM-PH4-ADAT7": 0,
+    "PCM-PH4-ADAT8": 0,
+    "PCM-PH4-AN1": 0,
+    "PCM-PH4-AN2": 0,
+    "PCM-PH4-AS1": 0,
+    "PCM-PH4-AS2": 0,
+    "PCM-PH4-PH3": 0,
+    "PCM-PH4-PH4": 0,
+    "Line-ADAT3-ADAT3": 0,
+    "Line-ADAT3-ADAT4": 0,
+    "Line-ADAT3-ADAT5": 0,
+    "Line-ADAT3-ADAT6": 0,
+    "Line-ADAT3-ADAT7": 0,
+    "Line-ADAT3-ADAT8": 0,
+    "Line-ADAT3-AN1": 0,
+    "Line-ADAT3-AN2": 0,
+    "Line-ADAT3-AS1": 0,
+    "Line-ADAT3-AS2": 0,
+    "Line-ADAT3-PH3": 0,
+    "Line-ADAT3-PH4": 0,
+    "Line-ADAT4-ADAT3": 0,
+    "Line-ADAT4-ADAT4": 0,
+    "Line-ADAT4-ADAT5": 0,
+    "Line-ADAT4-ADAT6": 0,
+    "Line-ADAT4-ADAT7": 0,
+    "Line-ADAT4-ADAT8": 0,
+    "Line-ADAT4-AN1": 0,
+    "Line-ADAT4-AN2": 0,
+    "Line-ADAT4-AS1": 0,
+    "Line-ADAT4-AS2": 0,
+    "Line-ADAT4-PH3": 0,
+    "Line-ADAT4-PH4": 0,
+    "Line-ADAT5-ADAT3": 0,
+    "Line-ADAT5-ADAT4": 0,
+    "Line-ADAT5-ADAT5": 0,
+    "Line-ADAT5-ADAT6": 0,
+    "Line-ADAT5-ADAT7": 0,
+    "Line-ADAT5-ADAT8": 0,
+    "Line-ADAT5-AN1": 0,
+    "Line-ADAT5-AN2": 0,
+    "Line-ADAT5-AS1": 0,
+    "Line-ADAT5-AS2": 0,
+    "Line-ADAT5-PH3": 0,
+    "Line-ADAT5-PH4": 0,
+    "Line-ADAT6-ADAT3": 0,
+    "Line-ADAT6-ADAT4": 0,
+    "Line-ADAT6-ADAT5": 0,
+    "Line-ADAT6-ADAT6": 0,
+    "Line-ADAT6-ADAT7": 0,
+    "Line-ADAT6-ADAT8": 0,
+    "Line-ADAT6-AN1": 0,
+    "Line-ADAT6-AN2": 0,
+    "Line-ADAT6-AS1": 0,
+    "Line-ADAT6-AS2": 0,
+    "Line-ADAT6-PH3": 0,
+    "Line-ADAT6-PH4": 0,
+    "Line-ADAT7-ADAT3": 0,
+    "Line-ADAT7-ADAT4": 0,
+    "Line-ADAT7-ADAT5": 0,
+    "Line-ADAT7-ADAT6": 0,
+    "Line-ADAT7-ADAT7": 0,
+    "Line-ADAT7-ADAT8": 0,
+    "Line-ADAT7-AN1": 0,
+    "Line-ADAT7-AN2": 0,
+    "Line-ADAT7-AS1": 0,
+    "Line-ADAT7-AS2": 0,
+    "Line-ADAT7-PH3": 0,
+    "Line-ADAT7-PH4": 0,
+    "Line-ADAT8-ADAT3": 0,
+    "Line-ADAT8-ADAT4": 0,
+    "Line-ADAT8-ADAT5": 0,
+    "Line-ADAT8-ADAT6": 0,
+    "Line-ADAT8-ADAT7": 0,
+    "Line-ADAT8-ADAT8": 0,
+    "Line-ADAT8-AN1": 0,
+    "Line-ADAT8-AN2": 0,
+    "Line-ADAT8-AS1": 0,
+    "Line-ADAT8-AS2": 0,
+    "Line-ADAT8-PH3": 0,
+    "Line-ADAT8-PH4": 0,
+    "Line-AS1-ADAT3": 0,
+    "Line-AS1-ADAT4": 0,
+    "Line-AS1-ADAT5": 0,
+    "Line-AS1-ADAT6": 0,
+    "Line-AS1-ADAT7": 0,
+    "Line-AS1-ADAT8": 0,
+    "Line-AS1-AN1": 0,
+    "Line-AS1-AN2": 0,
+    "Line-AS1-AS1": 0,
+    "Line-AS1-AS2": 0,
+    "Line-AS1-PH3": 0,
+    "Line-AS1-PH4": 0,
+    "Line-AS2-ADAT3": 0,
+    "Line-AS2-ADAT4": 0,
+    "Line-AS2-ADAT5": 0,
+    "Line-AS2-ADAT6": 0,
+    "Line-AS2-ADAT7": 0,
+    "Line-AS2-ADAT8": 0,
+    "Line-AS2-AN1": 0,
+    "Line-AS2-AN2": 0,
+    "Line-AS2-AS1": 0,
+    "Line-AS2-AS2": 0,
+    "Line-AS2-PH3": 0,
+    "Line-AS2-PH4": 0,
+    "Line-IN3-ADAT3": 0,
+    "Line-IN3-ADAT4": 0,
+    "Line-IN3-ADAT5": 0,
+    "Line-IN3-ADAT6": 0,
+    "Line-IN3-ADAT7": 0,
+    "Line-IN3-ADAT8": 0,
+    "Line-IN3-AN1": 0,
+    "Line-IN3-AN2": 0,
+    "Line-IN3-AS1": 0,
+    "Line-IN3-AS2": 0,
+    "Line-IN3-PH3": 0,
+    "Line-IN3-PH4": 0,
+    "Line-IN4-ADAT3": 0,
+    "Line-IN4-ADAT4": 0,
+    "Line-IN4-ADAT5": 0,
+    "Line-IN4-ADAT6": 0,
+    "Line-IN4-ADAT7": 0,
+    "Line-IN4-ADAT8": 0,
+    "Line-IN4-AN1": 0,
+    "Line-IN4-AN2": 0,
+    "Line-IN4-AS1": 0,
+    "Line-IN4-AS2": 0,
+    "Line-IN4-PH3": 0,
+    "Line-IN4-PH4": 0,
+    "Line-IN3 Gain": 0,
+    "Line-IN3 Sens.": -2147483648,
+    "Line-IN4 Gain": 0,
+    "Line-IN4 Sens.": -2147483648,
+    "Mic-AN1-ADAT3": 0,
+    "Mic-AN1-ADAT4": 0,
+    "Mic-AN1-ADAT5": 0,
+    "Mic-AN1-ADAT6": 0,
+    "Mic-AN1-ADAT7": 0,
+    "Mic-AN1-ADAT8": 0,
+    "Mic-AN1-AN1": 100,
+    "Mic-AN1-AN2": 0,
+    "Mic-AN1-AS1": 0,
+    "Mic-AN1-AS2": 0,
+    "Mic-AN1-PH3": 0,
+    "Mic-AN1-PH4": 0,
+    "Mic-AN2-ADAT3": 0,
+    "Mic-AN2-ADAT4": 0,
+    "Mic-AN2-ADAT5": 0,
+    "Mic-AN2-ADAT6": 0,
+    "Mic-AN2-ADAT7": 0,
+    "Mic-AN2-ADAT8": 0,
+    "Mic-AN2-AN1": 0,
+    "Mic-AN2-AN2": 100,
+    "Mic-AN2-AS1": 0,
+    "Mic-AN2-AS2": 0,
+    "Mic-AN2-PH3": 0,
+    "Mic-AN2-PH4": 0,
+    "Mic-AN1 48V": -2147483648,
+    "Mic-AN1 Gain": 0,
+    "Mic-AN1 PAD": -2147483648,
+    "Mic-AN2 48V": -2147483648,
+    "Mic-AN2 Gain": 0,
+    "Mic-AN2 PAD": -2147483648,
+    "IEC958": -2147483648,
+    "IEC958 Emphasis": -2147483648,
+    "IEC958 Pro Mask": -2147483648,
+    "Main-Out ADAT3": 0,
+    "Main-Out ADAT4": 0,
+    "Main-Out ADAT5": 0,
+    "Main-Out ADAT6": 0,
+    "Main-Out ADAT7": 0,
+    "Main-Out ADAT8": 0,
+    "Main-Out AN1": 60,
+    "Main-Out AN2": 60,
+    "Main-Out AS1": 0,
+    "Main-Out AS2": 5,
+    "Main-Out PH3": 50,
+    "Main-Out PH4": 50,
+    "Sample Clock Source": -2147483648
+  },
+  "patchbay_state": {
+    "blocks": [
+      {
+        "ctl_name": "Sample Clock Source",
+        "position": [
+          200.0,
+          7850.0
+        ],
+        "fader_value": 7322172,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": false
+      },
+      {
+        "ctl_name": "Main-Out PH4",
+        "position": [
+          50.0,
+          7850.0
+        ],
+        "fader_value": 50,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "output",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Main-Out PH3",
+        "position": [
+          800.0,
+          7700.0
+        ],
+        "fader_value": 50,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "output",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Main-Out AS2",
+        "position": [
+          650.0,
+          7700.0
+        ],
+        "fader_value": 5,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "output",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Main-Out AS1",
+        "position": [
+          500.0,
+          7700.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "output",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Main-Out AN2",
+        "position": [
+          350.0,
+          7700.0
+        ],
+        "fader_value": 60,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Main-Out AN1",
+        "position": [
+          200.0,
+          7700.0
+        ],
+        "fader_value": 60,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Main-Out ADAT8",
+        "position": [
+          50.0,
+          7700.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Main-Out ADAT7",
+        "position": [
+          800.0,
+          7550.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Main-Out ADAT6",
+        "position": [
+          650.0,
+          7550.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Main-Out ADAT5",
+        "position": [
+          500.0,
+          7550.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Main-Out ADAT4",
+        "position": [
+          350.0,
+          7550.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Main-Out ADAT3",
+        "position": [
+          200.0,
+          7550.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "IEC958 Pro Mask",
+        "position": [
+          50.0,
+          7550.0
+        ],
+        "fader_value": 7325639,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": false
+      },
+      {
+        "ctl_name": "IEC958 Emphasis",
+        "position": [
+          800.0,
+          7400.0
+        ],
+        "fader_value": 7325639,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": false
+      },
+      {
+        "ctl_name": "IEC958",
+        "position": [
+          650.0,
+          7400.0
+        ],
+        "fader_value": 7325639,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": false
+      },
+      {
+        "ctl_name": "Mic-AN2 PAD",
+        "position": [
+          500.0,
+          7400.0
+        ],
+        "fader_value": 7322172,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": false
+      },
+      {
+        "ctl_name": "Mic-AN2 Gain",
+        "position": [
+          350.0,
+          7400.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Mic-AN2 48V",
+        "position": [
+          200.0,
+          7400.0
+        ],
+        "fader_value": 7325639,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": false
+      },
+      {
+        "ctl_name": "Mic-AN1 PAD",
+        "position": [
+          50.0,
+          7400.0
+        ],
+        "fader_value": 7322172,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": false
+      },
+      {
+        "ctl_name": "Mic-AN1 Gain",
+        "position": [
+          800.0,
+          7250.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Mic-AN1 48V",
+        "position": [
+          650.0,
+          7250.0
+        ],
+        "fader_value": 7322172,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": false
+      },
+      {
+        "ctl_name": "Mic-AN2-PH4",
+        "position": [
+          500.0,
+          7250.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Mic-AN2-PH3",
+        "position": [
+          350.0,
+          7250.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Mic-AN2-AS2",
+        "position": [
+          200.0,
+          7250.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Mic-AN2-AS1",
+        "position": [
+          50.0,
+          7250.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Mic-AN2-AN2",
+        "position": [
+          800.0,
+          7100.0
+        ],
+        "fader_value": 100,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Mic-AN2-AN1",
+        "position": [
+          650.0,
+          7100.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Mic-AN2-ADAT8",
+        "position": [
+          500.0,
+          7100.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Mic-AN2-ADAT7",
+        "position": [
+          350.0,
+          7100.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Mic-AN2-ADAT6",
+        "position": [
+          200.0,
+          7100.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Mic-AN2-ADAT5",
+        "position": [
+          50.0,
+          7100.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Mic-AN2-ADAT4",
+        "position": [
+          800.0,
+          6950.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Mic-AN2-ADAT3",
+        "position": [
+          650.0,
+          6950.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Mic-AN1-PH4",
+        "position": [
+          500.0,
+          6950.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Mic-AN1-PH3",
+        "position": [
+          350.0,
+          6950.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Mic-AN1-AS2",
+        "position": [
+          200.0,
+          6950.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Mic-AN1-AS1",
+        "position": [
+          50.0,
+          6950.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Mic-AN1-AN2",
+        "position": [
+          800.0,
+          6800.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Mic-AN1-AN1",
+        "position": [
+          650.0,
+          6800.0
+        ],
+        "fader_value": 100,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Mic-AN1-ADAT8",
+        "position": [
+          500.0,
+          6800.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Mic-AN1-ADAT7",
+        "position": [
+          350.0,
+          6800.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Mic-AN1-ADAT6",
+        "position": [
+          200.0,
+          6800.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Mic-AN1-ADAT5",
+        "position": [
+          50.0,
+          6800.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Mic-AN1-ADAT4",
+        "position": [
+          800.0,
+          6650.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Mic-AN1-ADAT3",
+        "position": [
+          650.0,
+          6650.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-IN4 Sens.",
+        "position": [
+          500.0,
+          6650.0
+        ],
+        "fader_value": 7322172,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": false
+      },
+      {
+        "ctl_name": "Line-IN4 Gain",
+        "position": [
+          350.0,
+          6650.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-IN3 Sens.",
+        "position": [
+          200.0,
+          6650.0
+        ],
+        "fader_value": 7322172,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": false
+      },
+      {
+        "ctl_name": "Line-IN3 Gain",
+        "position": [
+          50.0,
+          6650.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-IN4-PH4",
+        "position": [
+          800.0,
+          6500.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-IN4-PH3",
+        "position": [
+          650.0,
+          6500.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-IN4-AS2",
+        "position": [
+          500.0,
+          6500.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-IN4-AS1",
+        "position": [
+          350.0,
+          6500.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-IN4-AN2",
+        "position": [
+          200.0,
+          6500.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-IN4-AN1",
+        "position": [
+          50.0,
+          6500.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-IN4-ADAT8",
+        "position": [
+          800.0,
+          6350.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-IN4-ADAT7",
+        "position": [
+          650.0,
+          6350.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-IN4-ADAT6",
+        "position": [
+          500.0,
+          6350.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-IN4-ADAT5",
+        "position": [
+          350.0,
+          6350.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-IN4-ADAT4",
+        "position": [
+          200.0,
+          6350.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-IN4-ADAT3",
+        "position": [
+          50.0,
+          6350.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-IN3-PH4",
+        "position": [
+          800.0,
+          6200.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-IN3-PH3",
+        "position": [
+          650.0,
+          6200.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-IN3-AS2",
+        "position": [
+          500.0,
+          6200.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-IN3-AS1",
+        "position": [
+          350.0,
+          6200.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-IN3-AN2",
+        "position": [
+          200.0,
+          6200.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-IN3-AN1",
+        "position": [
+          50.0,
+          6200.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-IN3-ADAT8",
+        "position": [
+          800.0,
+          6050.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-IN3-ADAT7",
+        "position": [
+          650.0,
+          6050.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-IN3-ADAT6",
+        "position": [
+          500.0,
+          6050.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-IN3-ADAT5",
+        "position": [
+          350.0,
+          6050.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-IN3-ADAT4",
+        "position": [
+          200.0,
+          6050.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-IN3-ADAT3",
+        "position": [
+          50.0,
+          6050.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-AS2-PH4",
+        "position": [
+          800.0,
+          5900.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-AS2-PH3",
+        "position": [
+          650.0,
+          5900.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-AS2-AS2",
+        "position": [
+          500.0,
+          5900.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-AS2-AS1",
+        "position": [
+          350.0,
+          5900.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-AS2-AN2",
+        "position": [
+          200.0,
+          5900.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-AS2-AN1",
+        "position": [
+          50.0,
+          5900.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-AS2-ADAT8",
+        "position": [
+          800.0,
+          5750.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-AS2-ADAT7",
+        "position": [
+          650.0,
+          5750.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-AS2-ADAT6",
+        "position": [
+          500.0,
+          5750.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-AS2-ADAT5",
+        "position": [
+          350.0,
+          5750.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-AS2-ADAT4",
+        "position": [
+          200.0,
+          5750.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-AS2-ADAT3",
+        "position": [
+          50.0,
+          5750.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-AS1-PH4",
+        "position": [
+          800.0,
+          5600.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-AS1-PH3",
+        "position": [
+          650.0,
+          5600.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-AS1-AS2",
+        "position": [
+          500.0,
+          5600.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-AS1-AS1",
+        "position": [
+          350.0,
+          5600.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-AS1-AN2",
+        "position": [
+          200.0,
+          5600.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-AS1-AN1",
+        "position": [
+          50.0,
+          5600.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-AS1-ADAT8",
+        "position": [
+          800.0,
+          5450.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-AS1-ADAT7",
+        "position": [
+          650.0,
+          5450.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-AS1-ADAT6",
+        "position": [
+          500.0,
+          5450.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-AS1-ADAT5",
+        "position": [
+          350.0,
+          5450.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-AS1-ADAT4",
+        "position": [
+          200.0,
+          5450.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-AS1-ADAT3",
+        "position": [
+          50.0,
+          5450.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT8-PH4",
+        "position": [
+          800.0,
+          5300.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT8-PH3",
+        "position": [
+          650.0,
+          5300.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT8-AS2",
+        "position": [
+          500.0,
+          5300.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT8-AS1",
+        "position": [
+          350.0,
+          5300.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT8-AN2",
+        "position": [
+          200.0,
+          5300.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT8-AN1",
+        "position": [
+          50.0,
+          5300.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT8-ADAT8",
+        "position": [
+          800.0,
+          5150.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT8-ADAT7",
+        "position": [
+          650.0,
+          5150.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT8-ADAT6",
+        "position": [
+          500.0,
+          5150.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT8-ADAT5",
+        "position": [
+          350.0,
+          5150.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT8-ADAT4",
+        "position": [
+          200.0,
+          5150.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT8-ADAT3",
+        "position": [
+          50.0,
+          5150.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT7-PH4",
+        "position": [
+          800.0,
+          5000.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT7-PH3",
+        "position": [
+          650.0,
+          5000.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT7-AS2",
+        "position": [
+          500.0,
+          5000.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT7-AS1",
+        "position": [
+          350.0,
+          5000.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT7-AN2",
+        "position": [
+          200.0,
+          5000.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT7-AN1",
+        "position": [
+          50.0,
+          5000.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT7-ADAT8",
+        "position": [
+          800.0,
+          4850.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT7-ADAT7",
+        "position": [
+          650.0,
+          4850.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT7-ADAT6",
+        "position": [
+          500.0,
+          4850.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT7-ADAT5",
+        "position": [
+          350.0,
+          4850.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT7-ADAT4",
+        "position": [
+          200.0,
+          4850.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT7-ADAT3",
+        "position": [
+          50.0,
+          4850.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT6-PH4",
+        "position": [
+          800.0,
+          4700.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT6-PH3",
+        "position": [
+          650.0,
+          4700.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT6-AS2",
+        "position": [
+          500.0,
+          4700.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT6-AS1",
+        "position": [
+          350.0,
+          4700.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT6-AN2",
+        "position": [
+          200.0,
+          4700.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT6-AN1",
+        "position": [
+          50.0,
+          4700.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT6-ADAT8",
+        "position": [
+          800.0,
+          4550.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT6-ADAT7",
+        "position": [
+          650.0,
+          4550.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT6-ADAT6",
+        "position": [
+          500.0,
+          4550.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT6-ADAT5",
+        "position": [
+          350.0,
+          4550.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT6-ADAT4",
+        "position": [
+          200.0,
+          4550.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT6-ADAT3",
+        "position": [
+          50.0,
+          4550.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT5-PH4",
+        "position": [
+          800.0,
+          4400.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT5-PH3",
+        "position": [
+          650.0,
+          4400.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT5-AS2",
+        "position": [
+          500.0,
+          4400.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT5-AS1",
+        "position": [
+          350.0,
+          4400.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT5-AN2",
+        "position": [
+          200.0,
+          4400.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT5-AN1",
+        "position": [
+          50.0,
+          4400.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT5-ADAT8",
+        "position": [
+          800.0,
+          4250.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT5-ADAT7",
+        "position": [
+          650.0,
+          4250.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT5-ADAT6",
+        "position": [
+          500.0,
+          4250.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT5-ADAT5",
+        "position": [
+          350.0,
+          4250.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT5-ADAT4",
+        "position": [
+          200.0,
+          4250.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT5-ADAT3",
+        "position": [
+          50.0,
+          4250.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT4-PH4",
+        "position": [
+          800.0,
+          4100.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT4-PH3",
+        "position": [
+          650.0,
+          4100.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT4-AS2",
+        "position": [
+          500.0,
+          4100.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT4-AS1",
+        "position": [
+          350.0,
+          4100.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT4-AN2",
+        "position": [
+          200.0,
+          4100.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT4-AN1",
+        "position": [
+          50.0,
+          4100.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT4-ADAT8",
+        "position": [
+          800.0,
+          3950.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT4-ADAT7",
+        "position": [
+          650.0,
+          3950.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT4-ADAT6",
+        "position": [
+          500.0,
+          3950.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT4-ADAT5",
+        "position": [
+          350.0,
+          3950.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT4-ADAT4",
+        "position": [
+          200.0,
+          3950.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT4-ADAT3",
+        "position": [
+          50.0,
+          3950.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT3-PH4",
+        "position": [
+          800.0,
+          3800.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT3-PH3",
+        "position": [
+          650.0,
+          3800.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT3-AS2",
+        "position": [
+          500.0,
+          3800.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT3-AS1",
+        "position": [
+          350.0,
+          3800.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT3-AN2",
+        "position": [
+          200.0,
+          3800.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT3-AN1",
+        "position": [
+          50.0,
+          3800.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT3-ADAT8",
+        "position": [
+          800.0,
+          3650.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT3-ADAT7",
+        "position": [
+          650.0,
+          3650.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT3-ADAT6",
+        "position": [
+          500.0,
+          3650.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT3-ADAT5",
+        "position": [
+          350.0,
+          3650.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT3-ADAT4",
+        "position": [
+          200.0,
+          3650.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "Line-ADAT3-ADAT3",
+        "position": [
+          50.0,
+          3650.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-PH4-PH4",
+        "position": [
+          800.0,
+          3500.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-PH4-PH3",
+        "position": [
+          650.0,
+          3500.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-PH4-AS2",
+        "position": [
+          500.0,
+          3500.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-PH4-AS1",
+        "position": [
+          350.0,
+          3500.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-PH4-AN2",
+        "position": [
+          200.0,
+          3500.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-PH4-AN1",
+        "position": [
+          50.0,
+          3500.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-PH4-ADAT8",
+        "position": [
+          800.0,
+          3350.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-PH4-ADAT7",
+        "position": [
+          650.0,
+          3350.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-PH4-ADAT6",
+        "position": [
+          500.0,
+          3350.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-PH4-ADAT5",
+        "position": [
+          350.0,
+          3350.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-PH4-ADAT4",
+        "position": [
+          200.0,
+          3350.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-PH4-ADAT3",
+        "position": [
+          50.0,
+          3350.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-PH3-PH4",
+        "position": [
+          800.0,
+          3200.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-PH3-PH3",
+        "position": [
+          650.0,
+          3200.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-PH3-AS2",
+        "position": [
+          500.0,
+          3200.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-PH3-AS1",
+        "position": [
+          350.0,
+          3200.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-PH3-AN2",
+        "position": [
+          200.0,
+          3200.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-PH3-AN1",
+        "position": [
+          50.0,
+          3200.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-PH3-ADAT8",
+        "position": [
+          800.0,
+          3050.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-PH3-ADAT7",
+        "position": [
+          650.0,
+          3050.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-PH3-ADAT6",
+        "position": [
+          500.0,
+          3050.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-PH3-ADAT5",
+        "position": [
+          350.0,
+          3050.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-PH3-ADAT4",
+        "position": [
+          200.0,
+          3050.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-PH3-ADAT3",
+        "position": [
+          50.0,
+          3050.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AS2-PH4",
+        "position": [
+          800.0,
+          2900.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AS2-PH3",
+        "position": [
+          650.0,
+          2900.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AS2-AS2",
+        "position": [
+          500.0,
+          2900.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AS2-AS1",
+        "position": [
+          350.0,
+          2900.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AS2-AN2",
+        "position": [
+          200.0,
+          2900.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AS2-AN1",
+        "position": [
+          50.0,
+          2900.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AS2-ADAT8",
+        "position": [
+          800.0,
+          2750.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AS2-ADAT7",
+        "position": [
+          650.0,
+          2750.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AS2-ADAT6",
+        "position": [
+          500.0,
+          2750.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AS2-ADAT5",
+        "position": [
+          350.0,
+          2750.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AS2-ADAT4",
+        "position": [
+          200.0,
+          2750.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AS2-ADAT3",
+        "position": [
+          50.0,
+          2750.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AS1-PH4",
+        "position": [
+          800.0,
+          2600.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AS1-PH3",
+        "position": [
+          650.0,
+          2600.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AS1-AS2",
+        "position": [
+          500.0,
+          2600.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AS1-AS1",
+        "position": [
+          350.0,
+          2600.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "generic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AS1-AN2",
+        "position": [
+          200.0,
+          2600.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AS1-AN1",
+        "position": [
+          50.0,
+          2600.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AS1-ADAT8",
+        "position": [
+          800.0,
+          2450.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AS1-ADAT7",
+        "position": [
+          650.0,
+          2450.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AS1-ADAT6",
+        "position": [
+          500.0,
+          2450.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AS1-ADAT5",
+        "position": [
+          350.0,
+          2450.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AS1-ADAT4",
+        "position": [
+          200.0,
+          2450.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AS1-ADAT3",
+        "position": [
+          50.0,
+          2450.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AN2-PH4",
+        "position": [
+          800.0,
+          2300.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AN2-PH3",
+        "position": [
+          650.0,
+          2300.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AN2-AS2",
+        "position": [
+          500.0,
+          2300.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AN2-AS1",
+        "position": [
+          350.0,
+          2300.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AN2-AN2",
+        "position": [
+          200.0,
+          2300.0
+        ],
+        "fader_value": 100,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AN2-AN1",
+        "position": [
+          50.0,
+          2300.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AN2-ADAT8",
+        "position": [
+          800.0,
+          2150.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AN2-ADAT7",
+        "position": [
+          650.0,
+          2150.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AN2-ADAT6",
+        "position": [
+          500.0,
+          2150.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AN2-ADAT5",
+        "position": [
+          350.0,
+          2150.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AN2-ADAT4",
+        "position": [
+          200.0,
+          2150.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AN2-ADAT3",
+        "position": [
+          50.0,
+          2150.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AN1-PH4",
+        "position": [
+          800.0,
+          2000.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AN1-PH3",
+        "position": [
+          650.0,
+          2000.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AN1-AS2",
+        "position": [
+          500.0,
+          2000.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AN1-AS1",
+        "position": [
+          350.0,
+          2000.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AN1-AN2",
+        "position": [
+          200.0,
+          2000.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AN1-AN1",
+        "position": [
+          50.0,
+          2000.0
+        ],
+        "fader_value": 100,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AN1-ADAT8",
+        "position": [
+          800.0,
+          1850.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AN1-ADAT7",
+        "position": [
+          650.0,
+          1850.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AN1-ADAT6",
+        "position": [
+          500.0,
+          1850.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AN1-ADAT5",
+        "position": [
+          350.0,
+          1850.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AN1-ADAT4",
+        "position": [
+          200.0,
+          1850.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-AN1-ADAT3",
+        "position": [
+          50.0,
+          1850.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT8-PH4",
+        "position": [
+          800.0,
+          1700.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT8-PH3",
+        "position": [
+          650.0,
+          1700.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT8-AS2",
+        "position": [
+          500.0,
+          1700.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT8-AS1",
+        "position": [
+          350.0,
+          1700.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT8-AN2",
+        "position": [
+          200.0,
+          1700.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT8-AN1",
+        "position": [
+          50.0,
+          1700.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT8-ADAT8",
+        "position": [
+          800.0,
+          1550.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT8-ADAT7",
+        "position": [
+          650.0,
+          1550.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT8-ADAT6",
+        "position": [
+          500.0,
+          1550.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT8-ADAT5",
+        "position": [
+          350.0,
+          1550.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT8-ADAT4",
+        "position": [
+          200.0,
+          1550.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT8-ADAT3",
+        "position": [
+          50.0,
+          1550.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT7-PH4",
+        "position": [
+          800.0,
+          1400.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT7-PH3",
+        "position": [
+          650.0,
+          1400.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT7-AS2",
+        "position": [
+          500.0,
+          1400.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT7-AS1",
+        "position": [
+          350.0,
+          1400.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT7-AN2",
+        "position": [
+          200.0,
+          1400.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT7-AN1",
+        "position": [
+          50.0,
+          1400.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT7-ADAT8",
+        "position": [
+          800.0,
+          1250.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT7-ADAT7",
+        "position": [
+          650.0,
+          1250.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT7-ADAT6",
+        "position": [
+          500.0,
+          1250.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT7-ADAT5",
+        "position": [
+          350.0,
+          1250.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT7-ADAT4",
+        "position": [
+          200.0,
+          1250.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT7-ADAT3",
+        "position": [
+          50.0,
+          1250.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT6-PH4",
+        "position": [
+          800.0,
+          1100.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT6-PH3",
+        "position": [
+          650.0,
+          1100.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT6-AS2",
+        "position": [
+          500.0,
+          1100.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT6-AS1",
+        "position": [
+          350.0,
+          1100.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT6-AN2",
+        "position": [
+          200.0,
+          1100.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT6-AN1",
+        "position": [
+          50.0,
+          1100.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT6-ADAT8",
+        "position": [
+          800.0,
+          950.0
+        ],
+        "fader_value": 55,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT6-ADAT7",
+        "position": [
+          650.0,
+          950.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT6-ADAT6",
+        "position": [
+          500.0,
+          950.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT6-ADAT5",
+        "position": [
+          350.0,
+          950.0
+        ],
+        "fader_value": 15,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT6-ADAT4",
+        "position": [
+          200.0,
+          950.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT6-ADAT3",
+        "position": [
+          50.0,
+          950.0
+        ],
+        "fader_value": 60,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT5-PH4",
+        "position": [
+          800.0,
+          800.0
+        ],
+        "fader_value": 80,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT5-PH3",
+        "position": [
+          650.0,
+          800.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT5-AS2",
+        "position": [
+          500.0,
+          800.0
+        ],
+        "fader_value": 70,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT5-AS1",
+        "position": [
+          350.0,
+          800.0
+        ],
+        "fader_value": 70,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT5-AN2",
+        "position": [
+          200.0,
+          800.0
+        ],
+        "fader_value": 67,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT5-AN1",
+        "position": [
+          50.0,
+          800.0
+        ],
+        "fader_value": 67,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT5-ADAT8",
+        "position": [
+          800.0,
+          650.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT5-ADAT7",
+        "position": [
+          650.0,
+          650.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT5-ADAT6",
+        "position": [
+          500.0,
+          650.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT5-ADAT5",
+        "position": [
+          350.0,
+          650.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT5-ADAT4",
+        "position": [
+          200.0,
+          650.0
+        ],
+        "fader_value": 40,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT5-ADAT3",
+        "position": [
+          50.0,
+          650.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT4-PH4",
+        "position": [
+          800.0,
+          500.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT4-PH3",
+        "position": [
+          650.0,
+          500.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT4-AS2",
+        "position": [
+          500.0,
+          500.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT4-AS1",
+        "position": [
+          350.0,
+          500.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT4-AN2",
+        "position": [
+          200.0,
+          500.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT4-AN1",
+        "position": [
+          50.0,
+          500.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT4-ADAT8",
+        "position": [
+          800.0,
+          350.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT4-ADAT7",
+        "position": [
+          650.0,
+          350.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT4-ADAT6",
+        "position": [
+          500.0,
+          350.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT4-ADAT5",
+        "position": [
+          350.0,
+          350.0
+        ],
+        "fader_value": 60,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT4-ADAT4",
+        "position": [
+          200.0,
+          350.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT4-ADAT3",
+        "position": [
+          50.0,
+          350.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT3-PH4",
+        "position": [
+          800.0,
+          200.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT3-PH3",
+        "position": [
+          650.0,
+          200.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT3-AS2",
+        "position": [
+          500.0,
+          200.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT3-AS1",
+        "position": [
+          350.0,
+          200.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "digital",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT3-AN2",
+        "position": [
+          200.0,
+          200.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT3-AN1",
+        "position": [
+          50.0,
+          200.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "mic",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT3-ADAT8",
+        "position": [
+          800.0,
+          50.0
+        ],
+        "fader_value": 100,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT3-ADAT7",
+        "position": [
+          650.0,
+          50.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT3-ADAT6",
+        "position": [
+          500.0,
+          50.0
+        ],
+        "fader_value": 100,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT3-ADAT5",
+        "position": [
+          350.0,
+          50.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT3-ADAT4",
+        "position": [
+          200.0,
+          50.0
+        ],
+        "fader_value": 100,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      },
+      {
+        "ctl_name": "PCM-ADAT3-ADAT3",
+        "position": [
+          80.0,
+          50.0
+        ],
+        "fader_value": 0,
+        "muted": false,
+        "soloed": false,
+        "channel_type": "line",
+        "show_fader": true
+      }
+    ],
+    "groups": [],
+    "view_transform": {
+      "zoom": 1.0,
+      "center": [
+        477.0,
+        135.0
+      ]
+    }
+  }
+}

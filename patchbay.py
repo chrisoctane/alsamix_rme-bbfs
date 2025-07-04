@@ -1191,6 +1191,9 @@ class PatchbayView(QGraphicsView):
         self.SNAP_DISTANCE = 30
         self.groups: List[GroupWidget] = []
         
+        # Store blocks by control name for easy lookup
+        self.blocks: Dict[str, ChannelBlock] = {}
+        
         # Mouse state
         self._panning = False
         self._zoom = 1.0
@@ -1224,6 +1227,7 @@ class PatchbayView(QGraphicsView):
                 block.setPos(x, y)
                 
                 self.graphics_scene.addItem(block)
+                self.blocks[ctl] = block  # Store in blocks dictionary
                 blocks_created += 1
                 
                 x += ChannelBlock.WIDTH + 30
@@ -1356,6 +1360,134 @@ class PatchbayView(QGraphicsView):
         animation.setEndValue(QPointF(x, y))
         animation.setEasingCurve(QEasingCurve.Type.OutCubic)
         animation.start()
+
+    def serialize_state(self):
+        """Serialize the current patchbay state to a dict."""
+        state = {
+            'blocks': [],
+            'groups': [],
+            'view_transform': {
+                'zoom': self._zoom,
+                'center': (self.mapToScene(self.viewport().rect().center()).x(),
+                          self.mapToScene(self.viewport().rect().center()).y())
+            }
+        }
+        
+        # Serialize individual blocks
+        for item in self.graphics_scene.items():
+            if isinstance(item, ChannelBlock):
+                block_state = {
+                    'ctl_name': item.ctl_name,
+                    'position': (item.pos().x(), item.pos().y()),
+                    'fader_value': item.fader_value,
+                    'muted': item.muted,
+                    'soloed': item.soloed,
+                    'channel_type': item.channel_type,
+                    'show_fader': item.show_fader
+                }
+                state['blocks'].append(block_state)
+        
+        # Serialize groups
+        for group in self.groups:
+            group_state = {
+                'block1_ctl': group.block1.ctl_name,
+                'block2_ctl': group.block2.ctl_name,
+                'position': (group.pos().x(), group.pos().y()),
+                'crossfader_value': group.crossfader.value(),
+                'macro_fader_value': group.macro_fader.value(),
+                'muted': group.muted,
+                'soloed': group.soloed
+            }
+            state['groups'].append(group_state)
+        
+        return state
+
+    def deserialize_state(self, state):
+        """Restore the patchbay state from a dict."""
+        try:
+            # Clear existing state
+            self.graphics_scene.clear()
+            self.groups.clear()
+            self.blocks.clear()  # Clear the blocks dictionary
+            
+            # Restore view transform
+            if 'view_transform' in state:
+                transform = state['view_transform']
+                self._zoom = transform.get('zoom', 1.0)
+                self.resetTransform()
+                self.scale(self._zoom, self._zoom)
+                
+                center = transform.get('center', (0, 0))
+                self.centerOn(center[0], center[1])
+            
+            # Restore blocks
+            if 'blocks' in state:
+                for block_state in state['blocks']:
+                    ctl_name = block_state['ctl_name']
+                    try:
+                        mixer = alsaaudio.Mixer(control=ctl_name, cardindex=self.card)
+                        block = ChannelBlock(ctl_name, mixer, block_state.get('show_fader', True))
+                        
+                        # Set position
+                        pos = block_state.get('position', (0, 0))
+                        block.setPos(pos[0], pos[1])
+                        
+                        # Set fader value
+                        fader_value = block_state.get('fader_value', 50)
+                        block.fader_value = fader_value
+                        if hasattr(block, 'fader') and block.fader:
+                            block.fader.setValue(fader_value)
+                        
+                        # Set mute/solo state
+                        block.muted = block_state.get('muted', False)
+                        block.soloed = block_state.get('soloed', False)
+                        block.update_mute_solo_state()
+                        
+                        # Add to scene and blocks list
+                        self.graphics_scene.addItem(block)
+                        self.blocks[ctl_name] = block
+                        
+                    except Exception as e:
+                        print(f"[WARNING] Failed to restore block {ctl_name}: {e}")
+            
+            # Restore groups
+            if 'groups' in state:
+                for group_state in state['groups']:
+                    block1_ctl = group_state['block1_ctl']
+                    block2_ctl = group_state['block2_ctl']
+                    
+                    if block1_ctl in self.blocks and block2_ctl in self.blocks:
+                        block1 = self.blocks[block1_ctl]
+                        block2 = self.blocks[block2_ctl]
+                        
+                        # Create group
+                        group = GroupWidget(block1, block2, self)
+                        
+                        # Set position
+                        pos = group_state.get('position', (0, 0))
+                        group.setPos(pos[0], pos[1])
+                        
+                        # Set fader values
+                        crossfader_value = group_state.get('crossfader_value', 50)
+                        macro_fader_value = group_state.get('macro_fader_value', 50)
+                        group.crossfader.setValue(crossfader_value)
+                        group.macro_fader.setValue(macro_fader_value)
+                        
+                        # Set mute/solo state
+                        group.muted = group_state.get('muted', False)
+                        group.soloed = group_state.get('soloed', False)
+                        group.update_mute_solo_state()
+                        
+                        # Add to scene and groups list
+                        self.graphics_scene.addItem(group)
+                        self.groups.append(group)
+            
+            self.update_scene_rect()
+            return True
+            
+        except Exception as e:
+            print(f"[ERROR] Failed to deserialize patchbay state: {e}")
+            return False
 
 
 # Custom QSlider with oval groove and circular handle

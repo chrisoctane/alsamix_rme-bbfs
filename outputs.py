@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QTabWidget, QHBoxLayout, QVBoxLayout, QScrollArea, QTabBar
+from PyQt6.QtWidgets import QWidget, QTabWidget, QHBoxLayout, QVBoxLayout, QScrollArea, QTabBar, QPushButton
 from PyQt6.QtGui import QPainter, QColor, QPen, QBrush, QFont
 from PyQt6.QtCore import QRect, Qt, QSize
 import alsa_backend
@@ -7,6 +7,7 @@ from mixer_widgets import MixerGroupWidget, OutputFaderWidget, StereoPairStrip, 
 from alsa_polling import AlsaPollingWorker
 from patchbay_widget import PatchbayWidget
 from mute_solo_manager import get_mute_solo_manager
+from preset_dialog import show_preset_dialog
 from typing import cast
 import re
 
@@ -96,7 +97,17 @@ class OutputsTabs(QWidget):
         self.tabs = QTabWidget()
         self.indicator_tabbar = IndicatorTabBar()
         self.tabs.setTabBar(self.indicator_tabbar)
+        
+        # Add preset button
+        preset_button = QPushButton("Presets")
+        preset_button.clicked.connect(self.show_presets)
+        preset_button.setMaximumWidth(100)
+        
         v = QVBoxLayout(self)
+        h = QHBoxLayout()
+        h.addWidget(preset_button)
+        h.addStretch()
+        v.addLayout(h)
         v.addWidget(self.tabs)
         self.setLayout(v)
 
@@ -179,6 +190,10 @@ class OutputsTabs(QWidget):
         
         # Track which tabs have soloed channels
         self.tab_solo_states = [False] * self.tabs.count()
+    
+    def show_presets(self):
+        """Show the preset dialog."""
+        show_preset_dialog(self)
 
     def _tab_changed(self, index):
         # Change ALSA poller to watch the visible tab's strips only

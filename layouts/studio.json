@@ -1,0 +1,88 @@
+{
+  "name": "studio",
+  "description": "Studio recording patchbay layout",
+  "blocks": [
+    {
+      "ctl_name": "Main-Out AN1",
+      "x": 50,
+      "y": 50,
+      "fader_value": 60,
+      "muted": false,
+      "soloed": false,
+      "show_fader": true,
+      "channel_type": "output"
+    },
+    {
+      "ctl_name": "Main-Out AN2",
+      "x": 200,
+      "y": 50,
+      "fader_value": 60,
+      "muted": false,
+      "soloed": false,
+      "show_fader": true,
+      "channel_type": "output"
+    },
+    {
+      "ctl_name": "Main-Out PH3",
+      "x": 350,
+      "y": 50,
+      "fader_value": 40,
+      "muted": false,
+      "soloed": false,
+      "show_fader": true,
+      "channel_type": "output"
+    },
+    {
+      "ctl_name": "Main-Out PH4",
+      "x": 500,
+      "y": 50,
+      "fader_value": 40,
+      "muted": false,
+      "soloed": false,
+      "show_fader": true,
+      "channel_type": "output"
+    },
+    {
+      "ctl_name": "Mic-AN1 Gain",
+      "x": 50,
+      "y": 200,
+      "fader_value": 0,
+      "muted": false,
+      "soloed": false,
+      "show_fader": true,
+      "channel_type": "mic"
+    },
+    {
+      "ctl_name": "Mic-AN2 Gain",
+      "x": 200,
+      "y": 200,
+      "fader_value": 0,
+      "muted": false,
+      "soloed": false,
+      "show_fader": true,
+      "channel_type": "mic"
+    },
+    {
+      "ctl_name": "Line-IN3 Gain",
+      "x": 350,
+      "y": 200,
+      "fader_value": 0,
+      "muted": false,
+      "soloed": false,
+      "show_fader": true,
+      "channel_type": "line"
+    },
+    {
+      "ctl_name": "Line-IN4 Gain",
+      "x": 500,
+      "y": 200,
+      "fader_value": 0,
+      "muted": false,
+      "soloed": false,
+      "show_fader": true,
+      "channel_type": "line"
+    }
+  ],
+  "groups": [],
+  "version": "1.0"
+}
