@@ -6,12 +6,13 @@ This includes the detailed channel strip, stereo pairs, and group widgets.
 """
 import alsa_backend
 
-from PyQt6.QtCore import Qt, QTimer, QPoint, QRect, QSize
-from PyQt6.QtGui import QFont, QPainter, QColor, QPen, QFontMetrics
+from PyQt6.QtCore import Qt, QTimer, QPoint, QRect, QSize, QRectF
+from PyQt6.QtGui import QFont, QPainter, QColor, QPen, QFontMetrics, QIcon
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QSlider,
     QSizePolicy, QPushButton, QSpacerItem
 )
+from oval_slider import OvalGrooveSlider
 
 # --- Custom Palette from Mock-up ---
 Colors = {
@@ -74,39 +75,40 @@ class Fader(QWidget):
         self.slider = QSlider(Qt.Orientation.Vertical)
         self.slider.setRange(0, 100)
         self.slider.setValue(70)
-        self.slider.setStyleSheet(f"""
-            QSlider::groove:vertical {{
-                background: {Colors['fader_track'].name()};
-                width: 8px;
-                border-radius: 4px;
-            }}
-            QSlider::handle:vertical {{
-                background: {Colors['active_red'].name()};
-                height: 10px;
-                width: 24px;
-                margin: 0 -8px;
-                border-radius: 3px;
-            }}
-        """)
+        self.slider.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
         layout.addWidget(self.slider)
 
     def paintEvent(self, event):
-        super().paintEvent(event)
-        p = QPainter(self)
-
-        p.setPen(Qt.PenStyle.NoPen)
-        p.setBrush(Colors["marker"])
-
-        # Correctly align the marker with the center of the fader handle
-        # A value of 70 is at 30% from the top.
-        # The center of a 10px handle at that position is at (height * 0.3) + 5px
-        # So we draw our 10px line starting at (height * 0.3) to align perfectly
-        marker_y = int(self.height() * 0.3)
-        marker_x = 0
-        marker_w = int(self.width() / 2)
-
-        p.drawRoundedRect(marker_x, marker_y, marker_w, 10, 3, 3)
-        p.end()
+        # Patchbay-style oval groove and circular handle
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        # Groove geometry
+        groove_w = 16
+        groove_h = self.height() - 12
+        groove_x = (self.width() - groove_w) // 2
+        groove_y = 6
+        groove_rect = QRectF(groove_x, groove_y, groove_w, groove_h)
+        radius = groove_w / 2
+        # Draw groove (oval)
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.setBrush(QColor("#222"))
+        painter.drawRoundedRect(groove_rect, radius, radius)
+        # Draw handle (circle)
+        handle_size = 16
+        slider_min = groove_y
+        slider_max = groove_y + groove_h - handle_size
+        val = (self.slider.maximum() - self.slider.value()) / (self.slider.maximum() - self.slider.minimum()) if self.slider.maximum() != self.slider.minimum() else 0
+        handle_y = slider_min + val * (slider_max - slider_min)
+        handle_x = (self.width() - handle_size) // 2
+        handle_rect = QRectF(handle_x, handle_y, handle_size, handle_size)
+        painter.setBrush(QColor("#3f7fff"))
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.drawEllipse(handle_rect)
+        # Draw focus/disabled if needed
+        if not self.isEnabled():
+            painter.setBrush(QColor(0, 0, 0, 80))
+            painter.drawEllipse(handle_rect)
+        painter.end()
 
 
 
@@ -114,19 +116,22 @@ class Fader(QWidget):
 class PanControl(QWidget):
     def __init__(self, label, initial=0, parent=None):
         super().__init__(parent)
+        self.setMinimumHeight(48)  # Ensure enough space for the slider and handle
         layout = QHBoxLayout(self)
-        self.label = QLabel(label)
-        self.slider = QSlider(Qt.Orientation.Horizontal)
+        layout.setContentsMargins(0, 8, 0, 8)
+        layout.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        self.slider = OvalGrooveSlider(Qt.Orientation.Horizontal, handle_color="#3f7fff", groove_color="#222")
         self.slider.setRange(-100, 100)
         self.slider.setValue(initial)
         self.slider.setMinimumWidth(50)
-        layout.addWidget(self.label)
         layout.addWidget(self.slider)
         self.setLayout(layout)
     def set_value(self, value):
         self.slider.setValue(value)
     def get_value(self):
         return self.slider.value()
+    def center(self):
+        self.slider.setValue(0)
     def connect(self, fn):
         self.slider.valueChanged.connect(fn)
 
@@ -150,7 +155,10 @@ class ChannelStrip(QWidget):
         controls_layout.setContentsMargins(0,0,0,0)
         controls_layout.setSpacing(10)
 
-        self.fader = Fader()
+        self.fader = OvalGrooveSlider(Qt.Orientation.Vertical, handle_color="#3f7fff", groove_color="#222")
+        self.fader.setRange(0, 100)
+        self.fader.setValue(self.get_alsa_value())
+        self.fader.valueChanged.connect(self.on_fader_change)
         controls_layout.addWidget(self.fader)
 
         control_axis_widget = QWidget()
@@ -177,24 +185,67 @@ class ChannelStrip(QWidget):
         control_axis_layout.addStretch()
 
         bottom_buttons_layout = QVBoxLayout()
+        # --- Patchbay-style mute/solo buttons (always circles) ---
+        button_size = 20
         self.btn_mute = QPushButton("M")
         self.btn_solo = QPushButton("S")
         self.btn_mute.setCheckable(True)
         self.btn_solo.setCheckable(True)
+        self.btn_mute.setFixedSize(button_size, button_size)
+        self.btn_solo.setFixedSize(button_size, button_size)
+        self.btn_mute.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
+        self.btn_solo.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
         self.btn_mute.clicked.connect(self._on_mute_clicked)
         self.btn_solo.clicked.connect(self._on_solo_clicked)
+        from mute_solo_manager import get_mute_solo_manager
+        manager = get_mute_solo_manager()
+        manager.flash_state_changed.connect(self._update_mute_flash)
+        manager.flash_state_changed.connect(self._update_solo_flash)
         bottom_buttons_layout.addWidget(self.btn_mute)
         bottom_buttons_layout.addWidget(self.btn_solo)
+        # Always use circular style for mute/solo
+        self.btn_mute.setStyleSheet(f"""
+            QPushButton {{
+                background: transparent;
+                background-color: #888888;
+                color: white;
+                border: 2px solid #333;
+                border-radius: {button_size//2}px;
+                font-size: 6px;
+                font-weight: bold;
+                padding: 0px;
+            }}
+            QPushButton:hover {{
+                background-color: #888888aa;
+                border: 2px solid #666;
+            }}
+            QPushButton:pressed {{
+                background-color: #88888877;
+            }}
+        """)
+        self.btn_solo.setStyleSheet(f"""
+            QPushButton {{
+                background: transparent;
+                background-color: #888888;
+                color: white;
+                border: 2px solid #333;
+                border-radius: {button_size//2}px;
+                font-size: 6px;
+                font-weight: bold;
+                padding: 0px;
+            }}
+            QPushButton:hover {{
+                background-color: #888888aa;
+                border: 2px solid #666;
+            }}
+            QPushButton:pressed {{
+                background-color: #88888877;
+            }}
+        """)
         control_axis_layout.addLayout(bottom_buttons_layout)
 
         controls_layout.addWidget(control_axis_widget)
         v_layout.addWidget(controls_area, stretch=1)
-
-        # Connect to mute/solo manager flash signals
-        from mute_solo_manager import get_mute_solo_manager
-        manager = get_mute_solo_manager()
-        manager.flash_state_changed.connect(self._update_solo_flash)
-        manager.flash_state_changed.connect(self._update_mute_flash)
 
         # PAN LAYOUT AREA (dynamic)
         self.pan_area = QWidget()
@@ -205,9 +256,6 @@ class ChannelStrip(QWidget):
         self.db_label = QLabel("0.0")
         self.db_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         v_layout.addWidget(self.db_label)
-
-        self.fader.slider.setValue(self.get_alsa_value())
-        self.fader.slider.valueChanged.connect(self.on_fader_change)
 
         self.set_button_styles()
         self.setup_pan_widgets()
@@ -303,163 +351,69 @@ class ChannelStrip(QWidget):
         self.btn_solo.setChecked(solo_state)
 
     def set_button_styles(self):
-        btn_style = f"""
-            QPushButton {{
-                background-color: #4a5568;
-                color: #cbd5e0;
-                border: none;
-                border-radius: 6px;
-                font-size: 11px;
-                font-weight: bold;
-                min-width: 32px;
-                max-width: 32px;
-                min-height: 24px;
-                max-height: 24px;
-            }}
-            QPushButton:checked {{
-                background-color: #f08080;
-                color: white;
-            }}
-        """
-        self.setStyleSheet(self.styleSheet() + btn_style)
-
-        for btn in self.findChildren(QPushButton):
-            if btn.text() == "S":
-                btn.setStyleSheet(btn.styleSheet() + f"QPushButton:checked {{ background-color: #fffacd; color: black; }}")
-            if btn.text() == "L":
-                btn.setStyleSheet(btn.styleSheet() + f"QPushButton:checked {{ background-color: #87ceeb; }}")
-
-    def _update_solo_flash(self, flash_on: bool):
-        """Update solo button flashing state (unified colorblind-friendly)."""
-        from mute_solo_manager import get_mute_solo_manager
-        manager = get_mute_solo_manager()
-        if not manager.get_solo_state(self.channel_name):
-            # Not soloed: set to grey
-            self.btn_solo.setStyleSheet(f"""
-                QPushButton {{
-                    background-color: #888888;
-                    color: black;
-                    border: none;
-                    border-radius: 6px;
-                    font-size: 11px;
-                    font-weight: bold;
-                    min-width: 32px;
-                    max-width: 32px;
-                    min-height: 24px;
-                    max-height: 24px;
-                }}
-                QPushButton:checked {{
-                    background-color: #888888;
-                    color: black;
-                }}
-            """)
-            return
-        if flash_on:
-            # Flash on - yellow
-            self.btn_solo.setStyleSheet(f"""
-                QPushButton {{
-                    background-color: #ffe066;
-                    color: black;
-                    border: none;
-                    border-radius: 6px;
-                    font-size: 11px;
-                    font-weight: bold;
-                    min-width: 32px;
-                    max-width: 32px;
-                    min-height: 24px;
-                    max-height: 24px;
-                }}
-                QPushButton:checked {{
-                    background-color: #ffe066;
-                    color: black;
-                }}
-            """)
-        else:
-            # Flash off - grey
-            self.btn_solo.setStyleSheet(f"""
-                QPushButton {{
-                    background-color: #888888;
-                    color: black;
-                    border: none;
-                    border-radius: 6px;
-                    font-size: 11px;
-                    font-weight: bold;
-                    min-width: 32px;
-                    max-width: 32px;
-                    min-height: 24px;
-                    max-height: 24px;
-                }}
-                QPushButton:checked {{
-                    background-color: #888888;
-                    color: black;
-                }}
-            """)
+        # Remove old style logic for mute/solo buttons
+        pass
 
     def _update_mute_flash(self, flash_on: bool):
-        """Update mute button flashing state (unified colorblind-friendly)."""
         from mute_solo_manager import get_mute_solo_manager
         manager = get_mute_solo_manager()
-        if not manager.get_mute_state(self.channel_name):
-            # Not muted: set to grey
-            self.btn_mute.setStyleSheet(f"""
-                QPushButton {{
-                    background-color: #888888;
-                    color: black;
-                    border: none;
-                    border-radius: 6px;
-                    font-size: 11px;
-                    font-weight: bold;
-                    min-width: 32px;
-                    max-width: 32px;
-                    min-height: 24px;
-                    max-height: 24px;
-                }}
-                QPushButton:checked {{
-                    background-color: #888888;
-                    color: black;
-                }}
-            """)
-            return
-        if flash_on:
-            # Flash on - red
-            self.btn_mute.setStyleSheet(f"""
-                QPushButton {{
-                    background-color: #ff3333;
-                    color: black;
-                    border: none;
-                    border-radius: 6px;
-                    font-size: 11px;
-                    font-weight: bold;
-                    min-width: 32px;
-                    max-width: 32px;
-                    min-height: 24px;
-                    max-height: 24px;
-                }}
-                QPushButton:checked {{
-                    background-color: #ff3333;
-                    color: black;
-                }}
-            """)
+        is_muted = manager.get_mute_state(self.channel_name)
+        explicit_mute = False
+        if self.channel_name in manager.channel_states:
+            explicit_mute = manager.channel_states[self.channel_name].explicit_mute
+        if not is_muted:
+            color = "#888888"
+        elif explicit_mute:
+            color = "#ff0000"
         else:
-            # Flash off - grey
-            self.btn_mute.setStyleSheet(f"""
-                QPushButton {{
-                    background-color: #888888;
-                    color: black;
-                    border: none;
-                    border-radius: 6px;
-                    font-size: 11px;
-                    font-weight: bold;
-                    min-width: 32px;
-                    max-width: 32px;
-                    min-height: 24px;
-                    max-height: 24px;
-                }}
-                QPushButton:checked {{
-                    background-color: #888888;
-                    color: black;
-                }}
-            """)
+            color = "#ff0000" if flash_on else "#660000"
+        self.btn_mute.setStyleSheet(f"""
+            QPushButton {{
+                background: transparent;
+                background-color: {color};
+                color: white;
+                border: 2px solid #333;
+                border-radius: {self.btn_mute.width()//2}px;
+                font-size: 6px;
+                font-weight: bold;
+                padding: 0px;
+            }}
+            QPushButton:hover {{
+                background-color: {color}aa;
+                border: 2px solid #666;
+            }}
+            QPushButton:pressed {{
+                background-color: {color}77;
+            }}
+        """)
+
+    def _update_solo_flash(self, flash_on: bool):
+        from mute_solo_manager import get_mute_solo_manager
+        manager = get_mute_solo_manager()
+        is_soloed = manager.get_solo_state(self.channel_name)
+        if not is_soloed:
+            color = "#888888"
+        else:
+            color = "#ffe066" if flash_on else "#7a6a00"
+        self.btn_solo.setStyleSheet(f"""
+            QPushButton {{
+                background: transparent;
+                background-color: {color};
+                color: white;
+                border: 2px solid #333;
+                border-radius: {self.btn_solo.width()//2}px;
+                font-size: 6px;
+                font-weight: bold;
+                padding: 0px;
+            }}
+            QPushButton:hover {{
+                background-color: {color}aa;
+                border: 2px solid #666;
+            }}
+            QPushButton:pressed {{
+                background-color: {color}77;
+            }}
+        """)
 
 class StereoPairStrip(QWidget):
     def __init__(self, lname, rname, functions=None, parent=None):
@@ -489,7 +443,9 @@ class StereoPairStrip(QWidget):
         layout.addLayout(hpair)
 
         # --- Link button for the pair ---
-        self.link_btn = QPushButton("🔗")
+        self.link_btn = QPushButton()
+        self.link_btn.setIcon(QIcon("icons/link.svg"))
+        self.link_btn.setIconSize(QSize(20, 20))
         self.link_btn.setCheckable(True)
         self.link_btn.setChecked(self.linked)
         self.link_btn.setToolTip("Stereo Link: Move both faders together")
@@ -500,7 +456,6 @@ class StereoPairStrip(QWidget):
                 background-color: #4a5568;
                 color: #cbd5e0;
                 border-radius: 6px;
-                font-size: 18px;
                 min-width: 32px; max-width: 32px;
                 min-height: 24px; max-height: 24px;
             }
@@ -522,8 +477,8 @@ class StereoPairStrip(QWidget):
         self.setLayout(layout)
 
         # --- Connect fader changes for linking ---
-        self.left_strip.fader.slider.valueChanged.connect(self._left_fader_moved)
-        self.right_strip.fader.slider.valueChanged.connect(self._right_fader_moved)
+        self.left_strip.fader.valueChanged.connect(self._left_fader_moved)
+        self.right_strip.fader.valueChanged.connect(self._right_fader_moved)
 
     def on_link_clicked(self, checked):
         self.linked = checked
@@ -534,18 +489,18 @@ class StereoPairStrip(QWidget):
         self.right_strip.setup_pan_widgets()
 
     def _left_fader_moved(self, value):
-        if self.linked and self.right_strip.fader.slider.value() != value:
-            self.right_strip.fader.slider.blockSignals(True)
-            self.right_strip.fader.slider.setValue(value)
-            self.right_strip.fader.slider.blockSignals(False)
+        if self.linked and self.right_strip.fader.value() != value:
+            self.right_strip.fader.blockSignals(True)
+            self.right_strip.fader.setValue(value)
+            self.right_strip.fader.blockSignals(False)
             self.right_strip.set_alsa_value(value)  # also update ALSA for R channel
             self.right_strip.db_label.setText(f"{value}")
 
     def _right_fader_moved(self, value):
-        if self.linked and self.left_strip.fader.slider.value() != value:
-            self.left_strip.fader.slider.blockSignals(True)
-            self.left_strip.fader.slider.setValue(value)
-            self.left_strip.fader.slider.blockSignals(False)
+        if self.linked and self.left_strip.fader.value() != value:
+            self.left_strip.fader.blockSignals(True)
+            self.left_strip.fader.setValue(value)
+            self.left_strip.fader.blockSignals(False)
             self.left_strip.set_alsa_value(value)  # also update ALSA for L channel
             self.left_strip.db_label.setText(f"{value}")
 
@@ -640,7 +595,9 @@ class OutputFaderWidget(QWidget):
 
         # --- Link button
         self.linked = True
-        self.link_btn = QPushButton("🔗")
+        self.link_btn = QPushButton()
+        self.link_btn.setIcon(QIcon("icons/link.svg"))
+        self.link_btn.setIconSize(QSize(20, 20))
         self.link_btn.setCheckable(True)
         self.link_btn.setChecked(self.linked)
         self.link_btn.setToolTip("Stereo Link: Move both output faders together")
@@ -651,7 +608,6 @@ class OutputFaderWidget(QWidget):
                 background-color: #4a5568;
                 color: #cbd5e0;
                 border-radius: 6px;
-                font-size: 18px;
                 min-width: 32px; max-width: 32px;
                 min-height: 24px; max-height: 24px;
             }
@@ -673,24 +629,24 @@ class OutputFaderWidget(QWidget):
         self.setLayout(v_layout)
 
         # --- Link logic
-        self.left_out_strip.fader.slider.valueChanged.connect(self._left_fader_moved)
-        self.right_out_strip.fader.slider.valueChanged.connect(self._right_fader_moved)
+        self.left_out_strip.fader.valueChanged.connect(self._left_fader_moved)
+        self.right_out_strip.fader.valueChanged.connect(self._right_fader_moved)
 
     def on_link_clicked(self, checked):
         self.linked = checked
 
     def _left_fader_moved(self, value):
-        if self.linked and self.right_out_strip.fader.slider.value() != value:
-            self.right_out_strip.fader.slider.blockSignals(True)
-            self.right_out_strip.fader.slider.setValue(value)
-            self.right_out_strip.fader.slider.blockSignals(False)
+        if self.linked and self.right_out_strip.fader.value() != value:
+            self.right_out_strip.fader.blockSignals(True)
+            self.right_out_strip.fader.setValue(value)
+            self.right_out_strip.fader.blockSignals(False)
             self.right_out_strip.set_alsa_value(value)
             self.right_out_strip.db_label.setText(f"{value}")
 
     def _right_fader_moved(self, value):
-        if self.linked and self.left_out_strip.fader.slider.value() != value:
-            self.left_out_strip.fader.slider.blockSignals(True)
-            self.left_out_strip.fader.slider.setValue(value)
-            self.left_out_strip.fader.slider.blockSignals(False)
+        if self.linked and self.left_out_strip.fader.value() != value:
+            self.left_out_strip.fader.blockSignals(True)
+            self.left_out_strip.fader.setValue(value)
+            self.left_out_strip.fader.blockSignals(False)
             self.left_out_strip.set_alsa_value(value)
             self.left_out_strip.db_label.setText(f"{value}")

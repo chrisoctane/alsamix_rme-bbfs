@@ -7,7 +7,7 @@ This includes the detailed channel strip, stereo pairs, and group widgets.
 import alsa_backend
 
 from PyQt6.QtCore import Qt, QTimer, QPoint, QRect, QSize, QRectF
-from PyQt6.QtGui import QFont, QPainter, QColor, QPen, QFontMetrics
+from PyQt6.QtGui import QFont, QPainter, QColor, QPen, QFontMetrics, QIcon
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QSlider,
     QSizePolicy, QPushButton, QSpacerItem
@@ -443,7 +443,9 @@ class StereoPairStrip(QWidget):
         layout.addLayout(hpair)
 
         # --- Link button for the pair ---
-        self.link_btn = QPushButton("🔗")
+        self.link_btn = QPushButton()
+        self.link_btn.setIcon(QIcon("icons/link.svg"))
+        self.link_btn.setIconSize(QSize(20, 20))
         self.link_btn.setCheckable(True)
         self.link_btn.setChecked(self.linked)
         self.link_btn.setToolTip("Stereo Link: Move both faders together")
@@ -454,7 +456,6 @@ class StereoPairStrip(QWidget):
                 background-color: #4a5568;
                 color: #cbd5e0;
                 border-radius: 6px;
-                font-size: 18px;
                 min-width: 32px; max-width: 32px;
                 min-height: 24px; max-height: 24px;
             }
@@ -594,7 +595,9 @@ class OutputFaderWidget(QWidget):
 
         # --- Link button
         self.linked = True
-        self.link_btn = QPushButton("🔗")
+        self.link_btn = QPushButton()
+        self.link_btn.setIcon(QIcon("icons/link.svg"))
+        self.link_btn.setIconSize(QSize(20, 20))
         self.link_btn.setCheckable(True)
         self.link_btn.setChecked(self.linked)
         self.link_btn.setToolTip("Stereo Link: Move both output faders together")
@@ -605,7 +608,6 @@ class OutputFaderWidget(QWidget):
                 background-color: #4a5568;
                 color: #cbd5e0;
                 border-radius: 6px;
-                font-size: 18px;
                 min-width: 32px; max-width: 32px;
                 min-height: 24px; max-height: 24px;
             }

@@ -196,10 +196,10 @@ class OutputsTabs(QWidget):
         # Update the visible tab's strips
         for strip in getattr(self, "active_strips", self.tab_channel_strips[0]):
             val = values.get(strip.channel_name)
-            if val is not None and val != strip.fader.slider.value():
-                strip.fader.slider.blockSignals(True)
-                strip.fader.slider.setValue(val)
-                strip.fader.slider.blockSignals(False)
+            if val is not None and val != strip.fader.value():
+                strip.fader.blockSignals(True)
+                strip.fader.setValue(val)
+                strip.fader.blockSignals(False)
                 strip.db_label.setText(f"{val}")
         
         # Update patchbay blocks for bidirectional sync (only when not on patchbay tab)

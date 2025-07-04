@@ -1,13 +1,13 @@
 # ALSABAY RME-BBFS Project Primer
 
-**For: RME Babyface Pro FS “TotalMix”–style Routing and Mixer UI (Qt6 + ALSA)** *Last updated: 2025-06-12*
+**For: RME Babyface Pro FS "TotalMix"–style Routing and Mixer UI (Qt6 + ALSA)** *Last updated: 2025-01-27*
 
 ---
 
 ## How to Use This Document
 
 * **Paste or upload this markdown to any ChatGPT or Copilot project chat.**
-* **Purpose:** Give *full* context, routing logic, naming conventions, UI requirements, and the project’s design goals to any AI or human developer instantly.
+* **Purpose:** Give *full* context, routing logic, naming conventions, UI requirements, and the project's design goals to any AI or human developer instantly.
 * **Tip:** Add new findings/notes to this document over time—future you will thank you!
 
 ---
@@ -22,9 +22,10 @@
 6. [Auto-Populated Output Tabs: Logic](#auto-populated-output-tabs-logic)
 7. [Current Implementation: File Structure](#current-implementation-file-structure)
 8. [Magic/Planned Features](#magicplanned-features)
-9. [References & Prior Art](#references--prior-art)
-10. [How to Onboard a New Contributor/AI](#how-to-onboard-a-new-contributorai)
-11. [Appendix: Example ALSA Control List](#appendix-example-alsa-control-list)
+9. [Recent Developments (v0.21)](#recent-developments-v021)
+10. [References & Prior Art](#references--prior-art)
+11. [How to Onboard a New Contributor/AI](#how-to-onboard-a-new-contributorai)
+12. [Appendix: Example ALSA Control List](#appendix-example-alsa-control-list)
 
 ---
 
@@ -35,7 +36,7 @@ Build a modular, extensible, open-source Qt6+ALSA-based mixer/patchbay GUI for t
 
 * All ALSA channels/faders visible, draggable, group-move.
 * Output tabs for each stereo output pair, auto-populated based on detected routing.
-* “Patchbay” style canvas where each ALSA channel (as defined by the driver) can be freely positioned, saved, and used as a routing/mixer reference.
+* "Patchbay" style canvas where each ALSA channel (as defined by the driver) can be freely positioned, saved, and used as a routing/mixer reference.
 * Per-channel level, pan, stereo link, mute, solo controls.
 * Support for complex routing scenarios (mono, stereo, multi-output, submixes).
 * Foundation for future RME feature expansion (phantom, pad, metering, etc).
@@ -58,19 +59,19 @@ Build a modular, extensible, open-source Qt6+ALSA-based mixer/patchbay GUI for t
 
 ### Routing Principles
 
-* **Each ALSA “mixer” control is an audio path:**
+* **Each ALSA "mixer" control is an audio path:**
   Format: `<typ>-<src>-<dst>`
 
-  * `<typ>` = signal “source” (e.g., PCM, Mic, Line, AS, PH)
-  * `<src>` = input channel or logical “bus” (e.g., AN1, AN2, ADAT3, AS1, PH3, etc)
-  * `<dst>` = physical output channel (“Main-Out”, “ADAT”, “PH”, etc)
+  * `<typ>` = signal "source" (e.g., PCM, Mic, Line, AS, PH)
+  * `<src>` = input channel or logical "bus" (e.g., AN1, AN2, ADAT3, AS1, PH3, etc)
+  * `<dst>` = physical output channel ("Main-Out", "ADAT", "PH", etc)
 
 #### Examples
 
-* **PCM-AN1-AN1** → Main\_Out AN1 (system audio L channel routed to main output L)
-* **PCM-AN2-AN2** → Main\_Out AN2 (system audio R channel to main output R)
-* **PCM-AN2-AN1** → Main\_Out AN1 (system R channel routed to left output — mono pan/dual output)
-* **AS1-PH3-ADAT7** → Main\_Out ADAT7 (mix of input and headphone routed to ADAT output)
+* **PCM-AN1-AN1** → Main_Out AN1 (system audio L channel routed to main output L)
+* **PCM-AN2-AN2** → Main_Out AN2 (system audio R channel to main output R)
+* **PCM-AN2-AN1** → Main_Out AN1 (system R channel routed to left output — mono pan/dual output)
+* **AS1-PH3-ADAT7** → Main_Out ADAT7 (mix of input and headphone routed to ADAT output)
 * **Main-Out AN1** (master physical output fader for AN1)
 * **Mic-AN1-AN2** (Mic channel 1 routed to output 2)
 
@@ -105,17 +106,17 @@ Build a modular, extensible, open-source Qt6+ALSA-based mixer/patchbay GUI for t
 
 * **Patchbay Canvas**
 
-  * One draggable “fader box” per ALSA control, all rendered to scale.
+  * One draggable "fader box" per ALSA control, all rendered to scale.
   * Drag handle at left; label shows ALSA name (auto-sized).
   * Group selection and group drag.
-  * Black/yellow header for all “Main-Out” channels.
+  * Black/yellow header for all "Main-Out" channels.
   * Scene auto-expands as channels are dragged to the edges.
   * Save/load JSON layout.
 
 * **Output Tabs**
 
   * Each main output pair gets a tab (AN1/AN2, PH3/PH4, ADAT3/4, etc).
-  * Tab auto-populates with all “inputs” (controls) routed to that output.
+  * Tab auto-populates with all "inputs" (controls) routed to that output.
   * Each input in tab gets:
 
     * Fader (level)
@@ -126,7 +127,7 @@ Build a modular, extensible, open-source Qt6+ALSA-based mixer/patchbay GUI for t
 
 * **Main Controls**
 
-  * Toolbar: Save/load/reset (“reset” = relayout, not reload)
+  * Toolbar: Save/load/reset ("reset" = relayout, not reload)
   * Zoom slider for patchbay
   * Window title, clear branding/version
 
@@ -134,11 +135,11 @@ Build a modular, extensible, open-source Qt6+ALSA-based mixer/patchbay GUI for t
 
 ## 6. Auto-Populated Output Tabs: Logic
 
-* For each “main out” (AN1/AN2, PH3/PH4, etc), find all controls with `<dst>` matching that output.
+* For each "main out" (AN1/AN2, PH3/PH4, etc), find all controls with `<dst>` matching that output.
 * Populate the tab with a fader per input/control, grouped by source (PCM, Mic, Line, AS, etc).
-* For mono sources routed to stereo outputs, pan logic is “per ALSA control” (e.g., PCM-AN1-AN2 + PCM-AN2-AN2 control L/R level).
+* For mono sources routed to stereo outputs, pan logic is "per ALSA control" (e.g., PCM-AN1-AN2 + PCM-AN2-AN2 control L/R level).
 * Stereo link buttons synchronize fader/pan for a pair.
-* The physical output master (“Main-Out ANx”) is always present at right of tab.
+* The physical output master ("Main-Out ANx") is always present at right of tab.
 
 ---
 
@@ -155,7 +156,7 @@ alsabay_rme-bbfs/
 
 ---
 
-## 8. “Magic”/Planned Features
+## 8. "Magic"/Planned Features
 
 * Auto-populate output tabs based on routing (DONE).
 * Group drag by handle (DONE), group selection (DONE).
@@ -171,54 +172,13 @@ alsabay_rme-bbfs/
 
 ---
 
-## 9. References & Prior Art
+## 9. Recent Developments (v0.21)
 
-* [RME TotalMix FX](https://www.rme-audio.de/totalmix-fx.html)
-* [QjackCtl](https://qjackctl.sourceforge.io/)
-* [AlsaMixer GUI](https://github.com/alsa-project/alsamixer)
-* [RME Linux class-compliant info](https://www.forum.rme-audio.de/viewtopic.php?id=34386)
-* [Babyface Pro FS ALSA Driver Controls](https://github.com/alsa-project/alsa-ucm-conf/blob/master/ucm2/USB-Audio/USB-Audio.conf)
-
----
-
-## 10. How to Onboard a New Contributor/AI
-
-* Upload/copy this primer.
-* Upload the latest project files.
-* Give a quick summary of your goal for the current coding session (e.g., “Fix pan law for mono/stereo routing”).
-* If you have specific test signals/scenarios, document those here!
-
----
-
-## 11. Appendix: Example ALSA Control List
-
-**(Short sample for reference — see your own **\`\`** for full list)**
-
-```
-PCM-AN1-AN1
-PCM-AN2-AN2
-PCM-AN2-AN1
-PCM-AS1-AN1
-Mic-AN1-AN1
-Line-ADAT3-AN1
-Main-Out AN1
-Main-Out AN2
-Main-Out PH3
-Main-Out PH4
-# ...etc
-```
-
----
-
-# Update 1 – Session Summary & Achievements
-
-*2025-06-13*
-
----
+*2025-01-27*
 
 ## Summary
 
-In this session, we made significant advancements in both the **code quality** and **developer workflow** of the alsamix\_rme-bbfs project:
+In this session, we made significant advancements in both the **code quality** and **developer workflow** of the alsamix_rme-bbfs project:
 
 ### 1. Patchbay GUI Refactor
 
@@ -226,10 +186,10 @@ In this session, we made significant advancements in both the **code quality** a
 
   * All blocks are now the same width and height (currently 210×170px, tweakable in code).
   * Labels are always a **single line, centered, and elided** (using `QFontMetrics.elidedText`) to prevent wrapping and preserve layout regardless of name length.
-  * Fader channels and “function” (non-fader) channels are **visually differentiated**:
+  * Fader channels and "function" (non-fader) channels are **visually differentiated**:
 
     * **Fader channels** have a blue (50% transparent) vertical fader bar and pastel yellow labels.
-    * **Non-fader/function channels** (detected by keywords like “Emphasis”, “PAD”, “Sens.”, etc.) have no fader and use a soft red background and dark text for instant recognition.
+    * **Non-fader/function channels** (detected by keywords like "Emphasis", "PAD", "Sens.", etc.) have no fader and use a soft red background and dark text for instant recognition.
     * **Output channels** (label starts with "Main-Out" or "OUT") use a distinct dark blue-black background.
   * All blocks feature a **drag handle** at the left for easy rearrangement.
 
@@ -253,13 +213,13 @@ In this session, we made significant advancements in both the **code quality** a
 ### 3. Git and GitHub Integration – Professional Version Control
 
 * **Project fully initialized with git** (local).
-* **`.gitignore` added** (ignores `__pycache__`, `.pyc`, `.zip` etc.).
-* **Repository created and set up on GitHub**: [https://github.com/chrisoctane/alsamix\_rme-bbfs](https://github.com/chrisoctane/alsamix_rme-bbfs)
+* **.gitignore added** (ignores __pycache__, .pyc, .zip etc.).
+* **Repository created and set up on GitHub**: [https://github.com/chrisoctane/alsamix_rme-bbfs](https://github.com/chrisoctane/alsamix_rme-bbfs)
 * **SSH authentication established** for futureproof, passwordless, tokenless pushing and pulling.
 * **First push completed,** even after troubleshooting common errors:
 
-  * Correctly handled remote URL issues, credential clearing, and GitHub’s move away from password authentication.
-  * Solved the “fetch first” error with `git pull --rebase origin main` before pushing, due to a pre-existing README or other auto-generated remote content.
+  * Correctly handled remote URL issues, credential clearing, and GitHub's move away from password authentication.
+  * Solved the "fetch first" error with git pull --rebase origin main before pushing, due to a pre-existing README or other auto-generated remote content.
 
 ### 4. Technical Lessons & Research Sources Used
 
@@ -267,9 +227,9 @@ In this session, we made significant advancements in both the **code quality** a
 * **QGraphicsTextItem and PyQt6 Layout**: Correct usage for single-line, center-aligned, and styled text in a QGraphicsView-based UI.
 * **Git & GitHub Workflow**:
 
-  * [GitHub’s authentication changes (no passwords)](https://github.blog/2020-12-15-token-authentication-requirements-for-git-operations/)
+  * [GitHub's authentication changes (no passwords)](https://github.blog/2020-12-15-token-authentication-requirements-for-git-operations/)
   * [Setting up SSH with GitHub](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh)
-  * General git usage: `git init`, `add`, `commit`, `push`, `branch -M main`, `.gitignore`, `git remote set-url`, `git pull --rebase`, `git push -u origin main`
+  * General git usage: git init, add, commit, push, branch -M main, .gitignore, git remote set-url, git pull --rebase, git push -u origin main
 * **GitHub Troubleshooting**:
 
   * Resolved issues around remote conflicts, credential helper bugs, and repository re-initialization.
@@ -292,8 +252,8 @@ In this session, we made significant advancements in both the **code quality** a
 
 ## Next Steps for Future Sessions
 
-* Use this **“Update 1”** as a changelog and technical onboarding doc for new contributors or AI sessions.
-* Reference this section in `primer.md` before starting a new session to skip unnecessary repetition and get straight to new improvements.
+* Use this "Update 1" as a changelog and technical onboarding doc for new contributors or AI sessions.
+* Reference this section in primer.md before starting a new session to skip unnecessary repetition and get straight to new improvements.
 
 ---
 
@@ -301,16 +261,16 @@ In this session, we made significant advancements in both the **code quality** a
 
 ---
 
-# Update 1.1 – Reference: jack\_mixer Inspiration
+# Update 1.1 – Reference: jack_mixer Inspiration
 
 *2025-06-13*
 
-## Reference: jack\_mixer
+## Reference: jack_mixer
 
 * [`jack_mixer` GitHub repository](https://github.com/jack-mixer/jack_mixer)
 * **Why referenced:**
 
-  * jack\_mixer demonstrates modular channel abstraction, dynamic routing, scene save/restore, and extensible UI design for digital audio mixers.
+  * jack_mixer demonstrates modular channel abstraction, dynamic routing, scene save/restore, and extensible UI design for digital audio mixers.
   * Features like per-channel pan/mute/solo, bus/grouping, save/load of full mixer state, and support for automation via MIDI/OSC offer inspiration for future alsamix features.
   * Its architecture (each mixer channel as a self-contained object/class) and separation of UI and audio logic are best practices for complex mixer software.
 * **Potential future borrowings:**
@@ -329,13 +289,13 @@ In this session, we made significant advancements in both the **code quality** a
 
 ### Objective
 
-Add a custom submix and channel layout view to `qasmixer` for the RME Babyface Pro FS, based on its advanced ALSA mixer mapping. The goal: make the UI reflect true hardware routing (stereo pairs, function controls, output tabs), referencing *TotalMix FX*’s UX and following canonical channel mapping as defined in `channelstructure.md`.
+Add a custom submix and channel layout view to `qasmixer` for the RME Babyface Pro FS, based on its advanced ALSA mixer mapping. The goal: make the UI reflect true hardware routing (stereo pairs, function controls, output tabs), referencing *TotalMix FX*'s UX and following canonical channel mapping as defined in `channelstructure.md`.
 
 ---
 
 ### Sources and References
 
-- **This Project’s Documents**  
+- **This Project's Documents**  
   - `channelstructure.md`: **Canonical source** for stereo pairs, function controls, output tab layout, and UI design logic.
   - `controls.txt`: Output from `amixer`/`alsactl` showing all available ALSA controls and their mapping for Babyface Pro FS.
   - `primer.md`: This living log and knowledge base.
@@ -369,7 +329,7 @@ Add a custom submix and channel layout view to `qasmixer` for the RME Babyface P
 4. **Build/Run Feedback**
     - Faced frequent C++/Qt symbol mismatches, header and member variable discrepancies (e.g., between private/public/protected, naming mismatches, method availability).
     - Constant upstream refactor drift, making it hard to maintain patches.
-    - QasMixer’s code structure is optimized for generic ALSA “simple mixer” layout, not for hard-coded, device-specific routing.
+    - QasMixer's code structure is optimized for generic ALSA "simple mixer" layout, not for hard-coded, device-specific routing.
     - Successful builds often failed to actually switch to the Babyface tab, or crashed when switching devices.
     - Even when compiling, the actual *Babyface* UI was never reliably shown (view switching logic too brittle, widget hierarchy complex, codebase hard to customize safely).
 
@@ -385,7 +345,7 @@ Add a custom submix and channel layout view to `qasmixer` for the RME Babyface P
 - **Code integration friction**:
     - Qt/C++ codebase is mature but not modular for this purpose—mixing new views in, or customizing the per-control display, is nontrivial.
     - Many C++ member functions and data members are private/protected; logic is not designed for extension by subclass.
-    - ALSA control naming and pairing logic is handled “flatly” in code, not with an abstract model that’s easy to override.
+    - ALSA control naming and pairing logic is handled "flatly" in code, not with an abstract model that's easy to override.
 
 - **ALSA Mapping is Understandable and Complete**:
     - Your mapping in `controls.txt` + `channelstructure.md` is **complete**.  
@@ -395,10 +355,10 @@ Add a custom submix and channel layout view to `qasmixer` for the RME Babyface P
 - **Recommended Path Forward**:
     - **Do NOT keep patching qasmixer** for device-specific logic unless you want to maintain a hard fork.
     - **Build a new, minimal Qt or Python+QML UI**:
-        - Use your *channelstructure.md* as the only “truth.”
-        - Read all ALSA control names at runtime (e.g., via pyalsaaudio, or Qt’s ALSA wrappers).
+        - Use your *channelstructure.md* as the only "truth."
+        - Read all ALSA control names at runtime (e.g., via pyalsaaudio, or Qt's ALSA wrappers).
         - Lay out the UI to match your grouping/pairing logic, with clear headers, stereo pairs, and function controls.
-        - Only expose what matters; keep the rest available for “advanced”/“patchbay” modes.
+        - Only expose what matters; keep the rest available for "advanced"/"patchbay" modes.
         - You can implement just what you need, and skip the hundreds of edge-cases qasmixer supports.
     - Optionally, submit a feature request or PR to upstream qasmixer for device-specific tab hooks (but expect upstream resistance—they want generic code).
 
